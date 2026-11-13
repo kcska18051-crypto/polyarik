@@ -1,0 +1,150 @@
+.proto-info-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  padding-bottom: 56px;
+}
+
+.proto-info-layout--standalone {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.proto-info-nav {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.proto-info-nav a {
+  display: block;
+  padding: 14px 18px;
+  color: #333;
+  font-size: 14px;
+}
+
+.proto-info-nav a + a {
+  border-top: 1px solid #e5e5e5;
+}
+
+.proto-info-nav a:hover,
+.proto-info-nav a:focus-visible,
+.proto-info-nav a[aria-current="page"] {
+  background: #f5f5f5;
+  color: #222;
+}
+
+.proto-info-nav a[aria-current="page"] {
+  box-shadow: inset 3px 0 #333;
+  font-weight: 700;
+}
+
+.proto-info-copy {
+  max-width: 76ch;
+  color: #333;
+}
+
+.proto-info-copy p,
+.proto-info-copy li {
+  line-height: 1.65;
+}
+
+.proto-info-copy h2 {
+  margin: 28px 0 10px;
+  font-size: 22px;
+}
+
+.proto-info-copy .proto-info-lead {
+  margin-top: 0;
+  font-size: 17px;
+}
+
+.proto-info-copy > :last-child {
+  margin-bottom: 0;
+}
+
+.proto-info-copy a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.proto-contacts-map {
+  display: block;
+  width: 100%;
+  height: clamp(290px, 45vw, 550px);
+  scroll-margin-top: 82px;
+  border: 0;
+  background: #f5f5f5;
+  filter: grayscale(1);
+}
+
+.proto-contacts-stores {
+  padding-block: 32px 56px;
+}
+
+.proto-contacts-store {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 22px 32px;
+  padding: 24px;
+}
+
+.proto-store-address {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 18px;
+}
+
+.proto-store-address img {
+  display: block;
+  width: 104px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.proto-store-address h2 {
+  margin: 0 0 6px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.proto-store-map-link {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.proto-store-address p {
+  margin: 8px 0 0;
+}
+
+.proto-store-phones {
+  display: grid;
+  gap: 5px;
+}
+
+.proto-store-phones a,
+.proto-store-email {
+  color: #333;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .proto-contacts-store { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 18px; }
+  .proto-store-address { grid-template-columns: 72px minmax(0, 1fr); gap: 14px; }
+  .proto-store-address img { width: 72px; height: 64px; }
+  .proto-store-phones, .proto-store-email { margin-left: 86px; }
+}
+
+@media (max-width: 991px) {
+  .proto-info-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-bottom: 36px;
+  }
+}

@@ -1,0 +1,72 @@
+.proto-b2b-home #content .prototype-image{background-color:#e8e8e8!important;background-image:none!important}
+.proto-b2b-home #content .prototype-video{width:100%;aspect-ratio:16/9}
+.proto-b2b-home #content .main-slider .main-slider__item{display:block!important;flex-shrink:0;width:100%}
+.proto-b2b-home #content .main-slider .swiper-wrapper{transition:transform .35s ease!important}
+.proto-b2b-home #content .main-slider .main-slider__item.light,.proto-b2b-home #content .main-slider .main-slider__item.light a,.proto-b2b-home #content .main-slider .main-slider__item.light .banner_title{color:#222!important}
+.proto-b2b-home #content .main-slider .main-slider__item{background-color:#e8e8e8!important}
+.proto-b2b-home #content .main-slider .banner_text{color:#555!important}
+.proto-b2b-home #content { padding-top: 0; }
+
+.polyarik-company-photo {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #e8e8e8;
+}
+.polyarik-horizontal-banner {
+  width: 100%;
+  min-height: 96px;
+  aspect-ratio: 8 / 1;
+  background: #e8e8e8;
+}
+
+.proto-b2b-home #content .main-slider .polyarik-hero-arrow {
+  display: grid !important;
+  place-items: center;
+  position: absolute;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  transform: translateY(-50%);
+  z-index: 5;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #333;
+  opacity: 1;
+  visibility: visible;
+}
+.main-slider .polyarik-hero-arrow::after { content: none; }
+.main-slider .polyarik-hero-arrow.swiper-button-prev { left: 16px; right: auto; }
+.main-slider .polyarik-hero-arrow.swiper-button-next { right: 16px; left: auto; }
+@media (max-width: 767px) {
+  .proto-b2b-home #content .main-slider .polyarik-hero-arrow { top: auto; bottom: 14px; transform: none; width: 36px; height: 36px; }
+}
+
+.proto-b2b-home #content .main-slider .banner_title,
+.proto-b2b-home #content .main-slider .head-title {
+  color: #222 !important;
+}
+.proto-b2b-home #content .main-slider .banner_title .section,
+.proto-b2b-home #content .main-slider .banner_text {
+  color: #444 !important;
+}
+.proto-b2b-home #content .main-slider .banner_buttons a.btn.btn-default {
+  background: #444 !important;
+  border-color: #444 !important;
+  color: #fff !important;
+}
+@media (max-width: 767px) {
+  .proto-b2b-home #content .main-slider .polyarik-hero-arrow {
+    top: 31vw;
+    bottom: auto;
+    transform: translateY(-50%);
+  }
+  .proto-b2b-home #content .main-slider .tablet_text .wrap {
+    padding-inline: 20px;
+  }
+}
+
+.front_review .swiper-slide > .item {
+  width: 100%;
+}

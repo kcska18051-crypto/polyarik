@@ -1,0 +1,39 @@
+.proto-service-order .order-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 28px;
+  padding: 22px;
+  background: #f7f7f7;
+}
+
+.proto-service-order .order-block p {
+  flex: 1 1 16rem;
+  margin: 0;
+}
+
+.proto-service-order-icon {
+  flex: 0 0 auto;
+  color: #666;
+}
+
+.proto-service-layout .proto-info-copy ol {
+  padding-left: 22px;
+  list-style: decimal;
+}
+
+@media (max-width: 767px) {
+  .proto-service-layout .proto-service-sidebar {
+    order: 1;
+  }
+
+  .proto-service-order .order-block {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .proto-service-order .order-block p {
+    flex-basis: 65%;
+  }
+}

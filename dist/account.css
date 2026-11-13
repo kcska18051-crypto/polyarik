@@ -1,0 +1,415 @@
+.proto-auth-dialog[hidden],
+.proto-auth-dialog form[hidden],
+.proto-account-page [hidden] {
+  display: none;
+}
+
+.proto-auth-dialog {
+  box-sizing: border-box;
+  width: min(580px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 48px 60px 30px;
+  overflow: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+}
+
+.proto-auth-dialog::backdrop {
+  background: #0007;
+}
+
+.proto-auth-dialog h2 {
+  margin: 0 0 32px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.proto-auth-close {
+  position: absolute;
+  top: 9px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: #666;
+  font: 26px/1.25 Arial, sans-serif;
+}
+
+.proto-auth-field {
+  margin-bottom: 20px;
+}
+
+.proto-auth-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.proto-auth-field label span,
+.proto-auth-required span,
+.proto-auth-error {
+  color: #9a3030;
+}
+
+.proto-auth-field input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 46px;
+  padding: 9px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 3px;
+  background: #f7f7f7;
+  color: #333;
+}
+
+.proto-auth-password {
+  position: relative;
+}
+
+.proto-auth-password input {
+  padding-inline-end: 48px;
+}
+
+.proto-auth-password button {
+  position: absolute;
+  inset: 1px 2px 1px auto;
+  display: grid;
+  width: 42px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #666;
+}
+
+.proto-auth-password button[aria-pressed="true"] {
+  color: #222;
+}
+
+.proto-auth-field small {
+  display: block;
+  margin-top: 5px;
+}
+
+.proto-auth-options,
+.proto-auth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.proto-auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.proto-auth-remember input {
+  appearance: none;
+  position: relative;
+  width: 32px;
+  height: 18px;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #e5e5e5;
+}
+
+.proto-auth-remember input::after {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  content: '';
+}
+
+.proto-auth-remember input:checked {
+  background: #666;
+}
+
+.proto-auth-remember input:checked::after {
+  left: 15px;
+}
+
+.proto-auth-text-action {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #444;
+  font-size: 12px;
+}
+
+.proto-auth-text-action:hover {
+  text-decoration: underline;
+}
+
+.proto-auth-required {
+  margin: 22px 0 18px;
+  font-size: 13px;
+}
+
+.proto-auth-actions .btn {
+  margin: 0;
+}
+
+.proto-auth-demo,
+.proto-auth-error {
+  margin: 12px 0 0;
+  font-size: 12px;
+}
+
+.proto-auth-demo code {
+  color: inherit;
+}
+
+.proto-auth-error:empty {
+  display: none;
+}
+
+.proto-registration-page .page-top {
+  text-align: center;
+}
+
+.proto-registration-page .topic__heading {
+  justify-content: center;
+  width: 100%;
+}
+
+.proto-registration-page .breadcrumbs {
+  justify-content: center;
+}
+
+.proto-registration {
+  padding-bottom: 56px;
+}
+
+.proto-registration-type {
+  width: fit-content;
+  margin: 0 auto 22px;
+  padding: 9px 20px;
+  border-radius: 3px;
+  background: #555;
+  color: #fff;
+}
+
+.proto-registration-intro {
+  max-width: 82ch;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.proto-registration .proto-auth-form {
+  max-width: 540px;
+  margin-inline: auto;
+}
+
+.proto-account-page {
+  padding-bottom: 64px;
+}
+
+.proto-account-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 230px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.proto-account-nav button {
+  padding: 14px 18px;
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+  background: #fff;
+  color: #333;
+  text-align: left;
+  font-size: 14px;
+}
+
+.proto-account-nav button:hover {
+  background: #f5f5f5;
+}
+
+.proto-account-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.proto-account-tile {
+  display: flex;
+  min-height: 151px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e5e5e5;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+}
+
+.proto-account-tile:hover,
+.proto-account-tile:focus-visible {
+  background: #f7f7f7;
+  color: #222;
+}
+
+.proto-account-tile svg {
+  color: #555;
+}
+
+.proto-account-panel,
+.proto-account-guest {
+  padding: 22px;
+  border: 1px solid #e5e5e5;
+}
+
+.proto-account-panel h2 {
+  margin: 0 0 14px;
+  font-size: 20px;
+}
+
+.proto-account-profile {
+  margin: 0 0 18px;
+}
+
+.proto-account-profile > div {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  gap: 6px 22px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.proto-account-profile dt {
+  color: #666;
+  font-weight: 400;
+}
+
+.proto-account-profile dd {
+  margin: 0;
+  color: #333;
+  overflow-wrap: anywhere;
+}
+
+.proto-account-profile + p {
+  margin: 0;
+}
+
+@media (max-width: 479px) {
+  .proto-account-profile > div { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 991px) {
+  .proto-account-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 767px) {
+  .proto-auth-dialog { padding: 36px 22px 22px; }
+  .proto-account-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .proto-account-tile { min-height: 120px; padding: 12px; }
+  .proto-account-tile svg { width: 42px; height: 42px; }
+}
+
+[data-account-parent][hidden],
+.proto-order-dialog [hidden] { display: none !important; }
+
+.proto-account-nav {
+  border-radius: 0;
+}
+.proto-account-nav a[aria-current="page"] { box-shadow: none; }
+
+.proto-orders {
+  min-width: 0;
+  color: #333;
+}
+.proto-orders > p { margin: 18px 0; }
+.proto-order-history {
+  display: block;
+  padding: 16px 18px;
+  border: 1px solid #e7e7e7;
+  margin-bottom: 18px;
+  color: #333;
+  font-weight: 700;
+}
+.proto-order-history:hover,
+.proto-order-history:focus-visible {
+  background: #f6f6f6;
+  text-decoration: underline;
+}
+.proto-orders h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  line-height: 1.35;
+}
+.proto-orders h3 {
+  border-top: 1px solid #e7e7e7;
+  margin: 0;
+  padding: 16px 18px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.proto-order-card { border: 1px solid #e7e7e7; }
+.proto-order-section { padding: 16px 18px; }
+.proto-order-section + .proto-order-section,
+.proto-order-card > .proto-order-actions { border-top: 1px solid #e7e7e7; }
+.proto-order-section h4 {
+  margin: 0 0 8px;
+  color: #626262;
+  font-size: 14px;
+  font-weight: 500;
+}
+.proto-order-section p { margin: 6px 0 0; font-size: 13px; }
+.proto-order-section strong { font-size: 14px; }
+.proto-order-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 18px;
+}
+.proto-order-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #dfdfdf;
+  background: #f3f3f3;
+  color: #444;
+  font-size: 12px;
+  font-weight: 600;
+}
+.proto-order-tag--pending { background: #eee; }
+.proto-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+.proto-order-card > .proto-order-actions { padding: 16px 18px; }
+.proto-order-actions .btn { margin: 0; }
+.proto-order-actions [data-order-action="cancel"] { margin-inline-start: auto; }
+
+.proto-help-layout { padding-bottom: 56px; }
+.proto-help-copy { min-width: 0; color: #444; }
+.proto-help-copy h2 { margin: 0 0 16px; font-size: 26px; }
+.proto-help-copy h3 { margin: 28px 0 14px; font-size: 22px; }
+.proto-help-copy p { margin: 0 0 18px; line-height: 1.7; }
+.proto-help-copy a { text-decoration: underline; text-underline-offset: .15em; }
+.proto-help-copy [id] { scroll-margin-top: 100px; }
+
+@media (max-width: 767px) {
+  .proto-order-actions [data-order-action="cancel"] { margin-inline-start: 0; }
+}
+@media (max-width: 479px) {
+  .proto-order-card > .proto-order-actions .btn { flex: 1 1 100%; }
+}
