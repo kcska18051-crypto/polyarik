@@ -739,7 +739,14 @@ img.proto-marking-badge {
 }
 
 .proto-cart-amount {
+  display: grid;
+  gap: 4px;
   padding-top: 5px;
+}
+
+.proto-cart-amount del {
+  text-decoration: line-through;
+  font-size: 12px;
 }
 
 .proto-cart-summary {

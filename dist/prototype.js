@@ -675,12 +675,18 @@ function renderCart(focus) {
     plus.dataset.cartAction = 'plus';
     stepper.append(minus, input, plus);
     quantityColumn.append(stepper);
-    if (product) quantityColumn.append(savedElement('span', 'muted', money(product.price * product.n) + ' / упак.'));
+    if (product) quantityColumn.append(savedElement('span', 'muted', money(discountedCartTotal(product.price * product.n).total) + ' / упак.'));
 
-    const amount = savedElement('strong', 'proto-cart-amount');
+    const amount = savedElement('div', 'proto-cart-amount');
     if (product) {
       const subtotal = product.price * product.n * quantity;
-      amount.textContent = money(subtotal);
+      const payable = discountedCartTotal(subtotal);
+      amount.append(savedElement('strong', '', money(payable.total)));
+      if (payable.discount) {
+        const original = savedElement('del', 'muted', money(subtotal));
+        original.setAttribute('aria-label', 'До скидки: ' + money(subtotal));
+        amount.append(original);
+      }
       total += subtotal;
     }
     const remove = savedButton('×', 'proto-saved-remove', () => setCartQuantity(id, 0, 'remove'), 'Удалить товар ' + id);
