@@ -111,12 +111,28 @@ function renderProductBreadcrumbs(tree, product) {
   const current = items.at(-1);
   current.querySelector('.breadcrumbs__item-name').textContent = product.name;
   for (const item of items.slice(2, -1)) item.remove();
-  if (!section) return;
-  const item = items[2];
-  const link = savedElement('a', 'breadcrumbs__link font_xs', section.name);
-  link.href = 'products.html?' + new URLSearchParams({section: section.slug, title: section.name});
-  item.replaceChildren(link);
-  current.before(item);
+  if (section) {
+    const item = items[2];
+    const link = savedElement('a', 'breadcrumbs__link font_xs');
+    const name = savedElement('span', 'breadcrumbs__item-name', section.name);
+    name.setAttribute('itemprop', 'name');
+    link.setAttribute('itemprop', 'item');
+    link.href = 'products.html?' + new URLSearchParams({section: section.slug, title: section.name});
+    link.append(name);
+    item.replaceChildren(link);
+    current.before(item);
+  }
+  for (const separator of all('.breadcrumbs__separator', crumbs)) separator.remove();
+  all('.breadcrumbs__item', crumbs).forEach((item, index) => {
+    if (index) item.before(savedElement('span', 'breadcrumbs__separator', '—'));
+    let position = item.querySelector('meta[itemprop="position"]');
+    if (!position) {
+      position = savedElement('meta');
+      position.setAttribute('itemprop', 'position');
+      (item.querySelector('a') || item).append(position);
+    }
+    position.content = String(index + 1);
+  });
 }
 
 function renderProductGallery(gallery, product) {
