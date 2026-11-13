@@ -544,9 +544,61 @@ function cartPromoApplied() {
   return sessionStorage.getItem(cartPromoKey) === cartPromoCode;
 }
 
-function discountedCartTotal(subtotal) {
-  const discount = cartPromoApplied() ? Math.round(subtotal * 10) / 100 : 0;
+const cartMinimum = 5000;
+const volumeDiscounts = [
+  {from: 30000, rate: 2}, {from: 50000, rate: 3},
+  {from: 100000, rate: 7}, {from: 150000, rate: 12}
+];
+
+function cartSubtotal() {
+  return cartEntries().reduce((sum, [id, quantity]) => {
+    const product = products.find(item => item.id === id);
+    return sum + (product ? product.price * product.n * quantity : 0);
+  }, 0);
+}
+
+function cartPricing() {
+  const subtotal = cartSubtotal();
+  const volumeRate = volumeDiscounts.filter(tier => subtotal >= tier.from).at(-1)?.rate || 0;
+  const promoRate = cartPromoApplied() ? 10 : 0;
+  const rate = volumeRate + promoRate;
+  return {subtotal, volumeRate, promoRate, rate, ...discountedCartTotal(subtotal, rate)};
+}
+
+function discountedCartTotal(subtotal, rate = cartPricing().rate) {
+  const discount = Math.round(subtotal * rate) / 100;
   return {discount, total: Math.round((subtotal - discount) * 100) / 100};
+}
+
+function renderDiscountScale(subtotal) {
+  const section = savedElement('section', 'proto-discount-scale');
+  section.setAttribute('aria-label', 'Скидка за объём заказа');
+  section.append(savedElement('h3', '', 'Скидка за объём заказа'));
+  const list = savedElement('ol');
+  const current = volumeDiscounts.filter(tier => subtotal >= tier.from).at(-1);
+  for (const tier of volumeDiscounts) {
+    const item = savedElement('li');
+    item.append(savedElement('span', '', 'от ' + money(tier.from)), savedElement('strong', '', tier.rate + '%'));
+    if (tier === current) {
+      item.setAttribute('aria-current', 'step');
+      item.append(savedElement('small', '', 'Ваша скидка'));
+    }
+    list.append(item);
+  }
+  section.append(list);
+  const next = volumeDiscounts.find(tier => subtotal < tier.from);
+  section.append(savedElement('p', 'proto-discount-next', next
+    ? 'Добавьте ещё ' + money(next.from - subtotal) + ', чтобы получить скидку ' + next.rate + '%.'
+    : 'У вас максимальная скидка за объём — 12%.'));
+  section.append(savedElement('p', 'muted', 'Скидка за объём суммируется с промокодом. Обе скидки считаем от стоимости товаров до скидок.'));
+  return section;
+}
+
+function renderOrderTerms() {
+  const terms = savedElement('div', 'proto-order-terms');
+  terms.append(savedElement('p', '', 'Оплата — по счёту на расчётный счёт.'),
+    savedElement('p', '', 'Условия оплаты и доставки транспортной компанией обсуждаются индивидуально с менеджером.'));
+  return terms;
 }
 
 function renderCartPromo(applied) {
@@ -626,7 +678,7 @@ function renderCart(focus) {
     renderCart({id: ''});
   }));
   items.append(header);
-  let total = 0;
+  const pricing = cartPricing();
   let hasUnavailableProduct = false;
 
   for (const [id, quantity] of entries) {
@@ -675,19 +727,18 @@ function renderCart(focus) {
     plus.dataset.cartAction = 'plus';
     stepper.append(minus, input, plus);
     quantityColumn.append(stepper);
-    if (product) quantityColumn.append(savedElement('span', 'muted', money(discountedCartTotal(product.price * product.n).total) + ' / упак.'));
+    if (product) quantityColumn.append(savedElement('span', 'muted', money(discountedCartTotal(product.price * product.n, pricing.rate).total) + ' / упак.'));
 
     const amount = savedElement('div', 'proto-cart-amount');
     if (product) {
       const subtotal = product.price * product.n * quantity;
-      const payable = discountedCartTotal(subtotal);
+      const payable = discountedCartTotal(subtotal, pricing.rate);
       amount.append(savedElement('strong', '', money(payable.total)));
       if (payable.discount) {
         const original = savedElement('del', 'muted', money(subtotal));
         original.setAttribute('aria-label', 'До скидки: ' + money(subtotal));
         amount.append(original);
       }
-      total += subtotal;
     }
     const remove = savedButton('×', 'proto-saved-remove', () => setCartQuantity(id, 0, 'remove'), 'Удалить товар ' + id);
     row.append(picture, description, quantityColumn, amount, remove);
@@ -695,18 +746,24 @@ function renderCart(focus) {
   }
 
   const totals = savedElement('aside', 'proto-cart-summary');
-  const payable = discountedCartTotal(total);
+  const payable = pricing;
   totals.append(savedElement('div', 'proto-cart-total-label', 'Итого:'), savedElement('strong', 'proto-saved-total', money(payable.total)), savedElement('p', 'muted', 'Упаковок: ' + count));
-  if (total > 0) {
-    if (payable.discount) {
-      totals.append(savedElement('p', 'proto-cart-discount muted', 'Товары: ' + money(total) + ' · Скидка: ' + money(payable.discount)));
+  if (pricing.subtotal > 0) {
+    totals.append(savedElement('p', 'proto-cart-discount muted', 'Товары до скидок: ' + money(pricing.subtotal)));
+    if (pricing.volumeRate) totals.append(savedElement('p', 'proto-cart-discount muted', 'Скидка за объём ' + pricing.volumeRate + '%: −' + money(discountedCartTotal(pricing.subtotal, pricing.volumeRate).discount)));
+    if (pricing.promoRate) totals.append(savedElement('p', 'proto-cart-discount muted', 'Промокод ' + pricing.promoRate + '%: −' + money(discountedCartTotal(pricing.subtotal, pricing.promoRate).discount)));
+    if (pricing.subtotal < cartMinimum) {
+      const warning = savedElement('p', 'proto-cart-minimum', 'Минимальный заказ — 5 000 ₽ до скидок. Добавьте ещё ' + money(cartMinimum - pricing.subtotal) + ', чтобы перейти к оформлению.');
+      warning.setAttribute('role', 'status');
+      totals.append(warning);
     }
     const quickBuy = savedButton('Купить в 1 клик', 'btn btn-transparent-border-color', () => openCheckout('Купить в 1 клик', payable.total));
     const checkout = savedButton('Перейти к оформлению', 'btn btn-default', () => openCheckout('Оформление заказа', payable.total));
-    quickBuy.disabled = checkout.disabled = hasUnavailableProduct;
-    totals.append(renderCartPromo(cartPromoApplied()), quickBuy, checkout);
+    quickBuy.disabled = checkout.disabled = hasUnavailableProduct || pricing.subtotal < cartMinimum;
+    totals.append(renderCartPromo(cartPromoApplied()), renderOrderTerms(), quickBuy, checkout);
     if (hasUnavailableProduct) totals.append(savedElement('p', 'muted', 'Удалите товары, которых нет в наличии, чтобы оформить заказ.'));
   }
+  items.append(renderDiscountScale(pricing.subtotal));
   layout.append(items, totals);
   savedPage.replaceChildren(layout);
   if (focus) {
@@ -716,11 +773,28 @@ function renderCart(focus) {
   }
 }
 
-function openCheckout(title, total) {
+function openCheckout(title) {
+  const pricing = cartPricing();
+  const unavailable = cartEntries().some(([id]) => {
+    const product = products.find(item => item.id === id);
+    return !product || product.unavailable;
+  });
+  if (pricing.subtotal < cartMinimum || unavailable) {
+    renderCart();
+    return;
+  }
   const dialog = document.querySelector('#proto-checkout');
   dialog.querySelector('h2').textContent = title;
-  dialog.querySelector('[data-checkout-summary]').textContent = 'Итого: ' + money(total);
-  dialog.showModal();
+  dialog.querySelector('[data-checkout-summary]').textContent = 'Итого: ' + money(pricing.total);
+  let details = dialog.querySelector('[data-checkout-details]');
+  if (!details) {
+    details = savedElement('div');
+    details.dataset.checkoutDetails = '';
+    dialog.querySelector('[data-checkout-summary]').after(details);
+  }
+  const breakdown = savedElement('p', 'muted', 'Товары до скидок: ' + money(pricing.subtotal) + '. Скидка: ' + money(pricing.discount) + ' (' + pricing.rate + '%).');
+  details.replaceChildren(breakdown, renderDiscountScale(pricing.subtotal), renderOrderTerms());
+  if (!dialog.open) dialog.showModal();
 }
 
 addEventListener('storage', event => {
@@ -1022,7 +1096,7 @@ document.querySelector('[data-cart-download]')?.addEventListener('click', () => 
   });
   const subtotal = rows.reduce((sum, row) => sum + (Number(row[3]) || 0), 0);
   const {discount, total} = discountedCartTotal(subtotal);
-  if (discount) rows.push(['', 'Скидка по промокоду', '', -discount]);
+  if (discount) rows.push(['', 'Скидки за объём и по промокоду', '', -discount]);
   rows.push(['', 'Итого', '', total]);
   const csv = [['Артикул', 'Товар', 'Упаковок', 'Сумма, ₽'], ...rows]
     .map(row => row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(';')).join(String.fromCharCode(13, 10));
