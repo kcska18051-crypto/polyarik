@@ -1229,6 +1229,40 @@ body#main :is(.btn, button)::after {
 }
 
 /* Order rules and volume discounts */
+.proto-loyalty { padding-block: 16px; border-block: 1px solid #ddd; margin-block: 16px; }
+.proto-loyalty h3 { margin: 0 0 12px; font-size: 17px; }
+.proto-loyalty p { font-size: 13px; line-height: 1.6; margin: 0 0 12px; }
+.proto-loyalty > a { display: block; margin-block: 8px; text-decoration: underline; }
+.proto-bonus-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-bottom: 10px; }
+.proto-bonus-form label { grid-column: 1 / -1; font-size: 13px; }
+.proto-bonus-form input { width: 100%; min-width: 0; padding: 10px; border: 1px solid #ccc; background: #fff; color: #333; }
+.proto-bonus-form button { margin: 0; padding-inline: 12px; }
+.proto-bonus-balance { display: block; font-size: 36px; margin-bottom: 16px; line-height: 1.2; }
+.proto-bonus-tile-icon { display: block; font-size: 48px; line-height: 50px; }
+.proto-bonus-account { min-width: 0; overflow-wrap: anywhere; }
+.proto-bonus-account h3 { font-size: 18px; margin-top: 24px; }
+.proto-account-menu-toggle { display: none; }
+@media (max-width: 991px) {
+  .proto-account-page .proto-account-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .proto-account-menu-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; padding: 10px 16px; border: 1px solid #ddd; background: #fff; color: #333; text-align: left; }
+  .proto-account-nav:not(.proto-account-nav-open) { display: none; }
+  body:has(.proto-account-page) .breadcrumbs { scrollbar-width: none; }
+  body:has(.proto-account-page) .breadcrumbs::-webkit-scrollbar { display: none; }
+  /* Persistent bottom navigation owns account, favourites and basket. */
+  #mobileheader :is(.wrap_cabinet, .wrap_basket) { display: none !important; }
+  #mobileheader .right-icons > div:has(> .wrap_cabinet),
+  #mobileheader .right-icons > div:has(> .wrap_basket),
+  #mobileheader .right-icons > div:has(> .wrap_icon.wrap_cabinet),
+  #mobileheader .right-icons > div:has(> .wrap_icon.wrap_basket) { display: none !important; }
+  #mobileheader .mobileheader-v1 { display: flex; align-items: center; min-height: 60px; height: 60px; padding-inline: 12px; gap: 12px; }
+  #mobileheader .burger { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; flex: 0 0 44px; }
+  #mobileheader .logo-block { flex: 1; width: auto; min-width: 0; padding: 0; }
+  #mobileheader .logo { width: auto; max-width: none; }
+  #mobileheader .polyarik-logo { font-size: 22px; letter-spacing: 1.5px; }
+  #mobileheader .right-icons { display: flex; align-items: center; margin: 0; padding: 0; flex: 0 0 auto; }
+  #mobileheader .right-icons .wrap_icon { margin: 0; padding: 0; }
+  #mobileheader .inline-search-show { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; }
+}
 .proto-discount-scale { padding: 24px 20px; border-top: 1px solid #e5e5e5; }
 .proto-discount-scale h3 { margin: 0 0 16px; font-size: 18px; }
 .proto-discount-scale ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
@@ -1245,6 +1279,8 @@ body#main :is(.btn, button)::after {
 .proto-cart-summary button:disabled { opacity: .45; cursor: not-allowed; }
 #proto-checkout { width: min(680px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow-y: auto; }
 #proto-checkout .proto-discount-scale { border: 1px solid #e5e5e5; margin: 20px 0; }
+#proto-checkout .polyarik-cart-heading { align-items: flex-start; gap: 12px; }
+#proto-checkout [data-close-checkout] { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; }
 @media (max-width: 767px) {
   .proto-discount-scale ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .proto-discount-scale { padding: 20px 16px; }

@@ -13,8 +13,15 @@ const accountViews = {
   profile: 'Личные данные',
   orders: 'Мои заказы',
   history: 'История заказов',
+  bonuses: 'Бонусы и кэшбэк',
 };
 let dialog;
+document.querySelector('[data-account-menu-toggle]')?.addEventListener('click', event => {
+  const button = event.currentTarget;
+  const expanded = button.getAttribute('aria-expanded') !== 'true';
+  button.setAttribute('aria-expanded', String(expanded));
+  document.querySelector('#account-navigation').classList.toggle('proto-account-nav-open', expanded);
+});
 
 function signedIn() {
   return sessionStorage.getItem(sessionKey) === '1' || localStorage.getItem(sessionKey) === '1';
@@ -40,6 +47,7 @@ function showAccount() {
   document.querySelector('[data-account-parent]').hidden = view === 'home';
   document.title = title + ' — Полярик';
   const cancelled = localStorage.getItem(cancelledOrderKey) === '1';
+  renderBonuses();
   accountLayout.querySelector('[data-current-order]').hidden = cancelled;
   accountLayout.querySelector('[data-no-current-order]').hidden = !cancelled;
   accountLayout.querySelector('[data-cancelled-order]').hidden = !cancelled;
@@ -53,7 +61,29 @@ function showAccount() {
   }
 }
 
-function signIn(remember) {
+function renderBonuses() {
+  const panel = accountLayout.querySelector('[data-account-panel="bonuses"]');
+  if (!panel) return;
+  const customer = window.PolyarikLoyalty.profile();
+  if (!customer) return;
+  const money = value => value.toLocaleString('ru-RU') + ' ₽';
+  panel.querySelector('[data-bonus-balance]').textContent = money(customer.balance);
+  panel.querySelector('[data-bonus-demo]').hidden = !customer.demo;
+  panel.querySelector('[data-welcome-status]').textContent = customer.newCustomer
+    ? 'На первый заказ компании доступна скидка 5%. Если скидка за объём вместе с промокодом выгоднее, применим её.'
+    : 'Скидка на первый заказ доступна только новым клиентам. Для следующих заказов действуют скидки за объём и промокоды.';
+  const history = panel.querySelector('[data-bonus-history]');
+  history.replaceChildren();
+  for (const entry of customer.history) {
+    const item = document.createElement('li');
+    item.textContent = String(entry.label || 'Операция с бонусами') + ': ' + money(Number(entry.amount) || 0);
+    history.append(item);
+  }
+  panel.querySelector('[data-bonus-empty]').hidden = customer.history.length > 0;
+}
+
+function signIn(remember, identity = 'demo') {
+  window.PolyarikLoyalty.startProfile(identity);
   (remember ? localStorage : sessionStorage).setItem(sessionKey, '1');
   if (accountLayout) {
     dialog?.close();
@@ -187,6 +217,7 @@ if (orderDialog) {
 document.querySelector('[data-account-logout]')?.addEventListener('click', () => {
   sessionStorage.removeItem(sessionKey);
   localStorage.removeItem(sessionKey);
+  sessionStorage.removeItem('polyarik-bonus-requested');
   location.href = 'account.html';
 });
 
@@ -202,11 +233,11 @@ if (registration) {
       return;
     }
     registration.reset();
-    signIn(false);
+    signIn(false, 'new');
   });
 }
 
 addEventListener('pageshow', showAccount);
-addEventListener('storage', event => { if (!event.key || event.key === sessionKey || event.key === cancelledOrderKey) showAccount(); });
+addEventListener('storage', event => { if (!event.key || event.key === sessionKey || event.key === cancelledOrderKey || event.key.startsWith('polyarik-loyalty-')) showAccount(); });
 showAccount();
 })();

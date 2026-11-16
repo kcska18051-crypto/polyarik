@@ -561,8 +561,7 @@ function cartPricing() {
   const subtotal = cartSubtotal();
   const volumeRate = volumeDiscounts.filter(tier => subtotal >= tier.from).at(-1)?.rate || 0;
   const promoRate = cartPromoApplied() ? 10 : 0;
-  const rate = volumeRate + promoRate;
-  return {subtotal, volumeRate, promoRate, rate, ...discountedCartTotal(subtotal, rate)};
+  return window.PolyarikLoyalty.pricing(subtotal, volumeRate, promoRate);
 }
 
 function discountedCartTotal(subtotal, rate = cartPricing().rate) {
@@ -581,7 +580,7 @@ function renderDiscountScale(subtotal) {
     item.append(savedElement('span', '', 'от ' + money(tier.from)), savedElement('strong', '', tier.rate + '%'));
     if (tier === current) {
       item.setAttribute('aria-current', 'step');
-      item.append(savedElement('small', '', 'Ваша скидка'));
+      item.append(savedElement('small', '', cartPricing().welcomeRate ? 'Доступна за объём' : 'Ваша скидка'));
     }
     list.append(item);
   }
@@ -591,7 +590,55 @@ function renderDiscountScale(subtotal) {
     ? 'Добавьте ещё ' + money(next.from - subtotal) + ', чтобы получить скидку ' + next.rate + '%.'
     : 'У вас максимальная скидка за объём — 12%.'));
   section.append(savedElement('p', 'muted', 'Скидка за объём суммируется с промокодом. Обе скидки считаем от стоимости товаров до скидок.'));
+  section.append(savedElement('p', 'muted', 'На первый заказ компании — 5%. Применяем более выгодный вариант: 5% или скидку за объём вместе с промокодом.'));
   return section;
+}
+
+function renderCartLoyalty(pricing) {
+  const box = savedElement('section', 'proto-loyalty');
+  box.setAttribute('aria-label', 'Бонусы и первый заказ');
+  const customer = window.PolyarikLoyalty.profile();
+  box.append(savedElement('h3', '', 'Бонусы и кэшбэк'));
+  if (!customer) {
+    box.append(savedElement('p', '', '5% на первый заказ компании. Зарегистрируйтесь или войдите, чтобы увидеть доступные скидки и бонусы.'));
+    const login = savedElement('a', '', 'Войти в кабинет');
+    login.href = 'account.html'; login.dataset.accountLink = '';
+    const register = savedElement('a', '', 'Зарегистрироваться'); register.href = 'registration.html';
+    box.append(login, register);
+  } else {
+    box.append(savedElement('p', '', 'Доступно бонусов: ' + money(customer.balance)));
+    if (customer.demo) box.append(savedElement('p', 'muted', 'Тестовый баланс демо-профиля.'));
+    if (customer.newCustomer) box.append(savedElement('p', '', pricing.welcomeRate
+      ? 'Применена скидка 5% на первый заказ.' : 'Вместо 5% на первый заказ применена более выгодная скидка.'));
+    const form = savedElement('form', 'proto-bonus-form');
+    const label = savedElement('label', '', 'Списать бонусы, ₽'); label.htmlFor = 'cart-bonus-amount';
+    const input = savedElement('input'); input.id = 'cart-bonus-amount'; input.type = 'number';
+    input.min = '0'; input.max = pricing.bonusLimit; input.step = '1'; input.inputMode = 'numeric';
+    input.value = pricing.bonusSpent; input.disabled = !pricing.bonusLimit;
+    input.setAttribute('aria-describedby', 'cart-bonus-limit');
+    const apply = savedElement('button', 'btn btn-transparent-border-color', 'Применить'); apply.type = 'submit'; apply.disabled = !pricing.bonusLimit;
+    form.append(label, input, apply);
+    form.addEventListener('submit', event => {
+      event.preventDefault(); window.PolyarikLoyalty.setRequestedBonus(input.value); renderCart();
+      savedPage.querySelector('#cart-bonus-amount')?.focus();
+    });
+    box.append(form);
+    const hint = savedElement('p', 'muted', 'Можно списать до ' + money(pricing.bonusLimit) + ' — не более 30% стоимости товаров после скидок и доступного баланса.');
+    hint.id = 'cart-bonus-limit'; box.append(hint);
+    const link = savedElement('a', '', 'Баланс и история бонусов'); link.href = 'account.html?view=bonuses'; box.append(link);
+  }
+  box.append(savedElement('p', 'muted', 'Размер и условия начисления кэшбэка уточняются. До их согласования начисления не производятся.'));
+  return box;
+}
+
+function renderPricingBreakdown(pricing) {
+  const box = savedElement('div', 'proto-pricing-breakdown');
+  box.append(savedElement('p', 'proto-cart-discount muted', 'Товары до скидок: ' + money(pricing.subtotal)));
+  for (const [rate, label] of [[pricing.volumeRate, 'Скидка за объём'], [pricing.promoRate, 'Промокод'], [pricing.welcomeRate, 'Скидка на первый заказ']]) {
+    if (rate) box.append(savedElement('p', 'proto-cart-discount muted', label + ' ' + rate + '%: −' + money(discountedCartTotal(pricing.subtotal, rate).discount)));
+  }
+  if (pricing.bonusSpent) box.append(savedElement('p', 'proto-cart-discount muted', 'Списание бонусов: −' + money(pricing.bonusSpent)));
+  return box;
 }
 
 function renderOrderTerms() {
@@ -749,9 +796,7 @@ function renderCart(focus) {
   const payable = pricing;
   totals.append(savedElement('div', 'proto-cart-total-label', 'Итого:'), savedElement('strong', 'proto-saved-total', money(payable.total)), savedElement('p', 'muted', 'Упаковок: ' + count));
   if (pricing.subtotal > 0) {
-    totals.append(savedElement('p', 'proto-cart-discount muted', 'Товары до скидок: ' + money(pricing.subtotal)));
-    if (pricing.volumeRate) totals.append(savedElement('p', 'proto-cart-discount muted', 'Скидка за объём ' + pricing.volumeRate + '%: −' + money(discountedCartTotal(pricing.subtotal, pricing.volumeRate).discount)));
-    if (pricing.promoRate) totals.append(savedElement('p', 'proto-cart-discount muted', 'Промокод ' + pricing.promoRate + '%: −' + money(discountedCartTotal(pricing.subtotal, pricing.promoRate).discount)));
+    totals.append(renderPricingBreakdown(pricing));
     if (pricing.subtotal < cartMinimum) {
       const warning = savedElement('p', 'proto-cart-minimum', 'Минимальный заказ — 5 000 ₽ до скидок. Добавьте ещё ' + money(cartMinimum - pricing.subtotal) + ', чтобы перейти к оформлению.');
       warning.setAttribute('role', 'status');
@@ -760,7 +805,7 @@ function renderCart(focus) {
     const quickBuy = savedButton('Купить в 1 клик', 'btn btn-transparent-border-color', () => openCheckout('Купить в 1 клик', payable.total));
     const checkout = savedButton('Перейти к оформлению', 'btn btn-default', () => openCheckout('Оформление заказа', payable.total));
     quickBuy.disabled = checkout.disabled = hasUnavailableProduct || pricing.subtotal < cartMinimum;
-    totals.append(renderCartPromo(cartPromoApplied()), renderOrderTerms(), quickBuy, checkout);
+    totals.append(renderCartPromo(cartPromoApplied()), renderCartLoyalty(pricing), renderOrderTerms(), quickBuy, checkout);
     if (hasUnavailableProduct) totals.append(savedElement('p', 'muted', 'Удалите товары, которых нет в наличии, чтобы оформить заказ.'));
   }
   items.append(renderDiscountScale(pricing.subtotal));
@@ -792,15 +837,15 @@ function openCheckout(title) {
     details.dataset.checkoutDetails = '';
     dialog.querySelector('[data-checkout-summary]').after(details);
   }
-  const breakdown = savedElement('p', 'muted', 'Товары до скидок: ' + money(pricing.subtotal) + '. Скидка: ' + money(pricing.discount) + ' (' + pricing.rate + '%).');
-  details.replaceChildren(breakdown, renderDiscountScale(pricing.subtotal), renderOrderTerms());
+  details.replaceChildren(renderPricingBreakdown(pricing), renderDiscountScale(pricing.subtotal), renderOrderTerms());
   if (!dialog.open) dialog.showModal();
 }
 
 addEventListener('storage', event => {
-  if (!event.key || event.key === 'polyarik-cart') renderCart();
+  if (!event.key || event.key === 'polyarik-cart' || event.key === 'polyarik-demo-account' || event.key.startsWith('polyarik-loyalty-')) renderCart();
   if (!event.key || event.key === 'polyarik-compare' || event.key === 'polyarik-favorite') renderSavedList();
 });
+addEventListener('pageshow', () => renderCart());
 renderCart();
 
 const offerNames = {
@@ -1094,9 +1139,9 @@ document.querySelector('[data-cart-download]')?.addEventListener('click', () => 
     const product = products.find(item => item.id === id);
     return [id, product?.name || '', quantity, product ? product.price * product.n * quantity : ''];
   });
-  const subtotal = rows.reduce((sum, row) => sum + (Number(row[3]) || 0), 0);
-  const {discount, total} = discountedCartTotal(subtotal);
-  if (discount) rows.push(['', 'Скидки за объём и по промокоду', '', -discount]);
+  const {discount, bonusSpent, total} = cartPricing();
+  if (discount) rows.push(['', 'Скидки', '', -discount]);
+  if (bonusSpent) rows.push(['', 'Списание бонусов', '', -bonusSpent]);
   rows.push(['', 'Итого', '', total]);
   const csv = [['Артикул', 'Товар', 'Упаковок', 'Сумма, ₽'], ...rows]
     .map(row => row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(';')).join(String.fromCharCode(13, 10));
