@@ -219,44 +219,7 @@ function renderProductDetails(detail, product) {
       savedElement('p', '', `В упаковке ${product.n} шт. Цена за штуку — ${money(product.price)}, за упаковку — ${money(product.price * product.n)}.`)
     );
   }
-  const stores = document.querySelector('#stores');
-  stores?.replaceChildren(savedElement('p', '', availability));
-  const reviews = document.querySelector('#reviews');
-  reviews?.replaceChildren(savedElement('p', '', 'У товара пока нет отзывов.'));
-  const panels = new Map([['Описание', 'desc'], ['Наличие', 'stores'], ['Отзывы', 'reviews']]);
-  const strips = all('.js-store-scroll > .tabs.arrow_scroll, .product-item-detail-tabs-wrapper');
-  const sectionLinks = [];
-  for (const strip of strips) {
-    for (const link of all('ul.nav-tabs > li > a', strip)) {
-      const label = link.textContent.trim();
-      if (panels.has(label)) {
-        link.href = '#' + panels.get(label);
-        sectionLinks.push(link);
-      } else if (label === 'Как купить') {
-        link.href = 'buy.html';
-      } else if (link.getAttribute('href') === 'product.html') {
-        link.closest('li').remove();
-      }
-    }
-  }
-  function showPanel(scroll) {
-    const hash = location.hash.slice(1);
-    const id = [...panels.values()].includes(hash) ? hash : 'desc';
-    for (const panel of all('.js-store-scroll > .tab-content > .tab-pane')) {
-      const active = panel.id === id;
-      panel.hidden = !active;
-      panel.classList.toggle('active', active);
-    }
-    for (const link of sectionLinks) {
-      const active = link.hash === '#' + id;
-      link.closest('li').classList.toggle('active', active);
-      if (active) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
-    }
-    if (scroll && hash === id) document.getElementById(id)?.scrollIntoView();
-  }
-  addEventListener('hashchange', () => showPanel(true));
-  showPanel(Boolean(location.hash));
+  window.PolyarikProductTabs.mount(product);
 }
 
 function setPromoPrices(card, product) {
