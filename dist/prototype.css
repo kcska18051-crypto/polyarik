@@ -1281,6 +1281,42 @@ body#main :is(.btn, button)::after {
 #proto-checkout .proto-discount-scale { border: 1px solid #e5e5e5; margin: 20px 0; }
 #proto-checkout .polyarik-cart-heading { align-items: flex-start; gap: 12px; }
 #proto-checkout [data-close-checkout] { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; }
+#proto-checkout:has([data-checkout-form]), #proto-checkout:has(.proto-checkout-receipt) { width: min(820px, calc(100vw - 32px)); }
+.proto-checkout-form { display: grid; gap: 24px; margin-top: 20px; }
+.proto-checkout-form fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; min-width: 0; margin: 0; padding: 20px 16px; border: 1px solid #ddd; }
+.proto-checkout-form legend { float: none; width: auto; margin: 0; padding: 0 8px; border: 0; font-size: 17px; font-weight: 600; color: #333; }
+.proto-checkout-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.proto-checkout-field[hidden] { display: none; }
+.proto-checkout-field label { font-size: 13px; margin: 0; color: #333; }
+.proto-checkout-field :is(input, select, textarea) { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #ccc; background: #fff; color: #333; font-size: 16px; font-family: inherit; line-height: 1.5; border-radius: 0; }
+.proto-checkout-field :is(input, select, textarea):focus-visible { outline: 2px solid #555; outline-offset: 2px; }
+.proto-checkout-field textarea { min-height: 100px; resize: vertical; }
+.proto-checkout-field small { color: #666; font-size: 12px; line-height: 1.5; }
+.proto-checkout-field:has([name="legalAddress"]), .proto-checkout-field:has(textarea) { grid-column: 1 / -1; }
+.proto-checkout-overview { min-width: 0; padding: 20px 16px; background: #fafafa; border: 1px solid #ddd; }
+.proto-checkout-overview h3 { margin: 0 0 16px; font-size: 18px; }
+.proto-checkout-items { list-style: none; margin: 0 0 20px; padding: 0; }
+.proto-checkout-items li { margin: 0; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.proto-checkout-items li::before { content: none; }
+.proto-checkout-correct { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; line-height: 1.6; cursor: pointer; }
+.proto-checkout-correct input[type="checkbox"] { position: static !important; opacity: 1 !important; appearance: auto !important; display: block !important; width: 20px !important; height: 20px !important; flex: 0 0 20px; margin: 2px 0 0; }
+.proto-checkout-notice { padding: 12px; border-left: 3px solid #777; background: #f2f2f2; font-size: 12px; line-height: 1.6; }
+.proto-checkout-status { margin: 0; font-size: 14px; color: #333; }
+.proto-checkout-status:empty { display: none; }
+.proto-checkout-form > button { min-height: 48px; margin: 0; }
+.proto-checkout-receipt { margin: 16px 0 24px; }
+.proto-checkout-receipt > div { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 2fr); gap: 12px; border-bottom: 1px solid #ddd; padding: 10px 0; }
+.proto-checkout-receipt dt { font-size: 13px; color: #666; font-weight: 400; }
+.proto-checkout-receipt dd { font-size: 14px; margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.proto-checkout-receipt-totals { margin-block: 20px; padding-block: 16px; border-block: 1px solid #ddd; }
+.proto-checkout-receipt-totals p { font-size: 13px; line-height: 1.6; }
+.proto-checkout-next { padding-left: 22px; font-size: 14px; line-height: 1.7; }
+@media (max-width: 767px) {
+  .proto-checkout-form fieldset { grid-template-columns: minmax(0, 1fr); padding-inline: 12px; }
+  .proto-checkout-receipt > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .proto-checkout-overview { padding-inline: 12px; }
+  #proto-checkout .polyarik-cart-heading h2 { font-size: 23px; line-height: 1.35; min-width: 0; overflow-wrap: anywhere; }
+}
 @media (max-width: 767px) {
   .proto-discount-scale ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .proto-discount-scale { padding: 20px 16px; }

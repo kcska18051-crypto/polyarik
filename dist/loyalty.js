@@ -32,5 +32,15 @@
       total:Math.round((discountedTotal - bonusSpent) * 100) / 100};
   }
   function setRequestedBonus(value) { sessionStorage.setItem(requestedKey, String(whole(value))); }
-  window.PolyarikLoyalty = {profile, startProfile, pricing, setRequestedBonus};
+  function completeOrder(pricing, number) {
+    const customer = profile();
+    if (customer) {
+      const identity = localStorage.getItem(identityKey) === 'new' ? 'new' : 'demo';
+      const history = [...customer.history];
+      if (pricing.bonusSpent) history.push({label:'Списание по демонстрационному заказу ' + number, amount:-pricing.bonusSpent});
+      localStorage.setItem('polyarik-loyalty-' + identity, JSON.stringify({newCustomer:false, balance:Math.max(0, customer.balance - pricing.bonusSpent), history}));
+    }
+    sessionStorage.removeItem(requestedKey);
+  }
+  window.PolyarikLoyalty = {profile, startProfile, pricing, setRequestedBonus, completeOrder};
 })();

@@ -13,6 +13,7 @@ function setup() {
   const savedPage = document.querySelector('[data-saved-page]');
   const context = vm.createContext({window, document, localStorage, sessionStorage, URLSearchParams, products, savedPage, cartLinks:[]});
   vm.runInContext(fs.readFileSync(path.join(root, 'loyalty.js'), 'utf8'), context);
+  vm.runInContext(fs.readFileSync(path.join(root, 'checkout.js'), 'utf8'), context);
   vm.runInContext('const all=(s,r=document)=>Array.from(r.querySelectorAll(s));', context);
   vm.runInContext(source.slice(source.indexOf('function readCart('), source.indexOf('function renderPack(')), context);
   vm.runInContext(source.slice(source.indexOf("const cartPromoCode ="), source.indexOf("addEventListener('storage'")), context);

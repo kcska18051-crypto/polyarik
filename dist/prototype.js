@@ -711,6 +711,7 @@ function renderCart(focus) {
   if (!entries.length) {
     sessionStorage.removeItem(cartPromoKey);
     savedPage.replaceChildren(savedElement('p', 'proto-saved-empty', 'Корзина пуста.'));
+    window.PolyarikCheckout.appendLastOrderLink(savedPage);
     if (focus) savedPage.nextElementSibling.focus();
     return;
   }
@@ -831,13 +832,34 @@ function openCheckout(title) {
   const dialog = document.querySelector('#proto-checkout');
   dialog.querySelector('h2').textContent = title;
   dialog.querySelector('[data-checkout-summary]').textContent = 'Итого: ' + money(pricing.total);
-  let details = dialog.querySelector('[data-checkout-details]');
-  if (!details) {
-    details = savedElement('div');
-    details.dataset.checkoutDetails = '';
-    dialog.querySelector('[data-checkout-summary]').after(details);
-  }
-  details.replaceChildren(renderPricingBreakdown(pricing), renderDiscountScale(pricing.subtotal), renderOrderTerms());
+  window.PolyarikCheckout.open({dialog,
+    getOrder: () => {
+      const pricing = cartPricing();
+      const items = cartEntries().map(([id, quantity]) => {
+        const product = products.find(item => item.id === id);
+        return product && !product.unavailable ? {id, name:product.name, quantity, packSize:product.n, unitPrice:product.price} : null;
+      });
+      return pricing.subtotal >= cartMinimum && items.length && items.every(Boolean) ? {items, pricing} : null;
+    },
+    onConfirmed: order => {
+      const writes = [
+        [localStorage, 'polyarik-cart'], [localStorage, 'polyarik-loyalty-new'], [localStorage, 'polyarik-loyalty-demo'],
+        [sessionStorage, cartPromoKey], [sessionStorage, 'polyarik-bonus-requested']
+      ].map(([storage, key]) => ({storage, key, value:storage.getItem(key)}));
+      try {
+        window.PolyarikLoyalty.completeOrder(order.pricing, order.number);
+        localStorage.setItem('polyarik-cart', '{}');
+        sessionStorage.removeItem(cartPromoKey);
+      } catch (error) {
+        for (const {storage, key, value} of writes) {
+          try { if (value === null) storage.removeItem(key); else storage.setItem(key, value); } catch {}
+        }
+        throw error;
+      }
+      renderCart();
+    },
+    renderBreakdown:renderPricingBreakdown, renderScale:renderDiscountScale, renderTerms:renderOrderTerms
+  });
   if (!dialog.open) dialog.showModal();
 }
 
