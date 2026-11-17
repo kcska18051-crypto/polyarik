@@ -67,9 +67,6 @@ function renderBonuses() {
   const money = value => value.toLocaleString('ru-RU') + ' ₽';
   panel.querySelector('[data-bonus-balance]').textContent = money(customer.balance);
   panel.querySelector('[data-bonus-demo]').hidden = !customer.demo;
-  panel.querySelector('[data-welcome-status]').textContent = customer.newCustomer
-    ? 'На первый заказ компании действует дополнительная скидка 5%. Условия суммирования с другими скидками уточняются.'
-    : 'Скидка на первый заказ доступна только новым клиентам. Для следующих заказов действуют скидки за объём и промокоды.';
   const history = panel.querySelector('[data-bonus-history]');
   history.replaceChildren();
   for (const entry of customer.history) {

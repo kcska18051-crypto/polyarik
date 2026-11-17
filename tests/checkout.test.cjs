@@ -9,7 +9,7 @@ function open(app){
 }
 function fill(app,form){
  assert.ok(form,'checkout has a real company form');
- for(const [name,value] of Object.entries({company:'ООО «Тест»',taxId:'7707083893',legalAddress:'Москва, ул. Тестовая, 1',contact:'Тестовый менеджер',phone:'+7 (999) 123-45-67',email:'test@example.test',carrier:'Деловые линии',city:'Москва'}))form.elements.namedItem(name).value=value;
+ for(const [name,value] of Object.entries({company:'ООО «Тест»',taxId:'7707083893',legalAddress:'Москва, ул. Тестовая, 1',contact:'Тестовый менеджер',phone:'+7 (999) 123-45-67',email:'test@example.test',carrier:'Деловые линии',city:'Москва',insurance:'no'}))form.elements.namedItem(name).value=value;
  form.elements.namedItem('correctDetails').checked=true;
 }
 function submit(app,form){form.dispatchEvent(new app.window.Event('submit',{bubbles:true,cancelable:true}));}
@@ -54,7 +54,7 @@ test('confirmed demo order spends bonuses once and ends first-order eligibility'
  app.window.localStorage.setItem('polyarik-loyalty-new',JSON.stringify({newCustomer:true,balance:2000,history:[]}));app.window.sessionStorage.setItem('polyarik-bonus-requested','500');
  const form=open(app);fill(app,form);submit(app,form);submit(app,form);
  const profile=JSON.parse(app.window.localStorage.getItem('polyarik-loyalty-new'));assert.equal(profile.balance,1500);assert.equal(profile.newCustomer,false);assert.equal(profile.history.length,1);assert.equal(profile.history[0].amount,-500);
- const order=JSON.parse(app.window.sessionStorage.getItem('polyarik-last-order'));assert.equal(order.pricing.welcomeRate,5);assert.equal(order.pricing.total,4250);
+ const order=JSON.parse(app.window.sessionStorage.getItem('polyarik-last-order'));assert.equal(order.pricing.welcomeRate,0);assert.equal(order.pricing.total,4500);
 });
 test('closing and reopening retains the draft without creating an order',()=>{
  const app=setup();const form=open(app);fill(app,form);form.elements.company.dispatchEvent(new app.window.Event('input',{bubbles:true}));

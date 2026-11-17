@@ -26,7 +26,7 @@ test('direct checkout page is blocked for an empty or subminimum cart',()=>{
 test('page submission confirms on the page and the receipt can be reopened without a dialog',()=>{
  const app=setup('order');app.window.localStorage.setItem('polyarik-cart',JSON.stringify({'DEMO-A1':10}));vm.runInContext("openCheckout('Оформление заказа')",app.context);
  const form=app.document.querySelector('[data-checkout-form]');
- for(const [name,value]of Object.entries({company:'ООО Тест',taxId:'1234567890',legalAddress:'Тестовый адрес',contact:'Контакт',phone:'+79991234567',email:'test@example.test',carrier:'ТК',city:'Москва'}))form.elements[name].value=value;
+ for(const [name,value]of Object.entries({company:'ООО Тест',taxId:'1234567890',legalAddress:'Тестовый адрес',contact:'Контакт',phone:'+79991234567',email:'test@example.test',carrier:'ПЭК',city:'Москва',insurance:'no'}))form.elements[name].value=value;
  form.elements.correctDetails.checked=true;form.dispatchEvent(new app.window.Event('submit',{bubbles:true,cancelable:true}));
  assert.match(app.document.querySelector('#pagetitle').textContent,/ДЕМО-/);assert.equal(app.document.querySelector('[data-checkout-form]'),null);assert.equal(app.document.querySelector('dialog[open]'),null);
  assert.equal(app.window.PolyarikCheckout.showLastOrder(app.document.querySelector('[data-checkout-page]')),true);assert.match(app.document.querySelector('[data-checkout-summary]').textContent,/5\s?000/);

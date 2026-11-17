@@ -21,8 +21,9 @@
   }
   function pricing(subtotal, volumeRate, promoRate) {
     const customer = profile();
-    const welcomeRate = customer?.newCustomer && volumeRate + promoRate < 5 ? 5 : 0;
-    const rate = welcomeRate || volumeRate + promoRate;
+    // First-order concessions are agreed by the manager, never applied automatically.
+    const welcomeRate = 0;
+    const rate = volumeRate + promoRate;
     const discount = Math.round(subtotal * rate) / 100;
     const discountedTotal = Math.round((subtotal - discount) * 100) / 100;
     const bonusLimit = Math.min(customer?.balance || 0, Math.floor(Math.round(discountedTotal * 100) * 30 / 10000));

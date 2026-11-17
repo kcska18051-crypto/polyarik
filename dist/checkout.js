@@ -31,7 +31,9 @@
     for (const [label, value] of [
       ['Компания', c.company], [c.country === 'BY' ? 'УНП' : 'ИНН', c.taxId], ['КПП', c.kpp],
       ['Юридический адрес', c.legalAddress], ['Контактное лицо', c.contact], ['Телефон', c.phone], ['Email', c.email],
-      ['Транспортная компания', c.carrier], ['Город доставки', c.city], ['Адрес / терминал', c.deliveryAddress], ['Комментарий', c.comment]
+      ['Транспортная компания', c.carrierName || c.carrier], ['Город доставки', c.city], ['Адрес / терминал', c.deliveryAddress],
+      ['Страховка', c.insurance === 'yes' ? 'Нужна' : c.insurance === 'no' ? 'Не нужна' : ''],
+      ['Получатель', c.recipientName || c.contact], ['Телефон получателя', c.recipientPhone || c.phone], ['Комментарий', c.comment]
     ]) {
       if (!value) continue;
       const row = element('div'); row.append(element('dt', label), element('dd', value)); details.append(row);
@@ -61,15 +63,16 @@
     const form = element('form', undefined, 'proto-checkout-form'); form.dataset.checkoutForm = ''; form.noValidate = true;
     const draft = read(draftKey) || {};
     const status = element('p', '', 'proto-checkout-status'); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
-    const field = (group, name, label, {required = true, type = 'text', maxLength = 200, autocomplete = '', hint = ''} = {}) => {
+    const field = (group, name, label, {required = true, type = 'text', maxLength = 200, autocomplete = '', hint = '', options = [], defaultValue = ''} = {}) => {
       const wrap = element('div', undefined, 'proto-checkout-field');
       const id = 'checkout-' + name;
       const title = element('label', label + (required ? ' *' : '')); title.htmlFor = id;
-      const input = element(type === 'textarea' ? 'textarea' : 'input');
-      if (type !== 'textarea') input.type = type;
+      const input = element(type === 'textarea' ? 'textarea' : type === 'select' ? 'select' : 'input');
+      if (!['textarea','select'].includes(type)) input.type = type;
+      if (type === 'select') for (const [value,text] of options) { const option=element('option',text); option.value=value; input.append(option); }
       input.id = id; input.name = name; input.required = required; input.maxLength = maxLength;
       if (autocomplete) input.autocomplete = autocomplete;
-      input.value = typeof draft[name] === 'string' ? draft[name] : '';
+      input.value = typeof draft[name] === 'string' ? draft[name] : defaultValue;
       wrap.append(title, input);
       if (hint) { const help = element('small', hint); help.id = id + '-hint'; input.setAttribute('aria-describedby', help.id); wrap.append(help); }
       group.append(wrap); return input;
@@ -99,9 +102,22 @@
     field(contact, 'phone', 'Телефон', {type:'tel', autocomplete:'tel', maxLength:40, hint:'С кодом страны, например +7 или +375.'});
     field(contact, 'email', 'Email', {type:'email', autocomplete:'email', maxLength:254});
     const shipping = group(page ? 'Способ доставки' : '3. Доставка транспортной компанией'); shipping.id = 'order-delivery';
-    field(shipping, 'carrier', 'Транспортная компания', {maxLength:120, hint:'Укажите удобную вам ТК. Условия согласуем индивидуально.'});
+    const carrier = field(shipping, 'carrier', 'Транспортная компания', {type:'select',options:[['','Выберите транспортную компанию'],['СДЭК','СДЭК'],['ПЭК','ПЭК'],['Деловые линии','Деловые линии'],['Ozon','Ozon'],['other','Другой способ']],hint:'Стоимость и сроки доставки согласовываются индивидуально с менеджером.'});
+    const carrierOther = field(shipping,'carrierOther','Укажите другой способ доставки',{maxLength:120});
+    if (draft.carrier && ![...carrier.options].some(option=>option.value===draft.carrier)) { carrier.value='other';carrierOther.value=String(draft.carrierName || draft.carrier); }
+    function updateCarrier() { const other=carrier.value==='other'; carrierOther.disabled=!other;carrierOther.required=other;carrierOther.closest('.proto-checkout-field').hidden=!other;carrierOther.setCustomValidity(''); }
+    updateCarrier();carrier.addEventListener('change',updateCarrier);
     field(shipping, 'city', 'Город доставки', {maxLength:120, autocomplete:'address-level2'});
     field(shipping, 'deliveryAddress', 'Адрес или терминал ТК', {required:false, maxLength:500});
+    field(shipping,'insurance','Страховка отправления',{type:'select',options:[['','Выберите вариант'],['yes','Нужна'],['no','Не нужна']],hint:'Условия и стоимость страховки согласовываются с менеджером.'});
+    const recipientType = field(shipping,'recipientType','Получатель',{type:'select',defaultValue:'contact',options:[['contact','Контактное лицо заказа'],['other','Другой получатель']]});
+    const recipientFields = element('div',undefined,'proto-recipient-fields');shipping.append(recipientFields);
+    const surname=field(recipientFields,'receiverSurname','Фамилия получателя',{maxLength:80,autocomplete:'family-name'});
+    const name=field(recipientFields,'receiverName','Имя получателя',{maxLength:80,autocomplete:'given-name'});
+    const patronymic=field(recipientFields,'receiverPatronymic','Отчество получателя (при наличии)',{required:false,maxLength:80,autocomplete:'additional-name'});
+    const receiverPhone=field(recipientFields,'receiverPhone','Телефон получателя',{type:'tel',maxLength:40,autocomplete:'tel'});
+    function updateRecipient() { const other=recipientType.value==='other';recipientFields.hidden=!other;for(const input of [surname,name,patronymic,receiverPhone]){input.disabled=!other;input.required=other && input!==patronymic;input.setCustomValidity('');} }
+    updateRecipient();recipientType.addEventListener('change',updateRecipient);
     field(shipping, 'comment', 'Комментарий к заказу', {required:false, type:'textarea', maxLength:1500});
     if (page) {
       shipping.append(element('strong','Транспортная компания'),element('p','Стоимость и сроки доставки согласовываются индивидуально с менеджером.','proto-order-section-note'));
@@ -135,7 +151,11 @@
     const customerData = () => {
       const data = {};
       for (const input of form.elements) if (input.name && input.name !== 'correctDetails' && !input.disabled) data[input.name] = input.value.trim();
-      data.kpp ||= ''; return data;
+      data.kpp ||= '';
+      data.carrierName = data.carrier==='other' ? data.carrierOther : data.carrier;
+      data.recipientName = data.recipientType==='other' ? [data.receiverSurname,data.receiverName,data.receiverPatronymic].filter(Boolean).join(' ') : data.contact;
+      data.recipientPhone = data.recipientType==='other' ? data.receiverPhone : data.phone;
+      return data;
     };
     const saveDraft = () => { try { sessionStorage.setItem(draftKey, JSON.stringify(customerData())); } catch { status.textContent = 'Не удалось сохранить черновик в браузере.'; } };
     form.addEventListener('input', event => { if (event.target.setCustomValidity) event.target.setCustomValidity(''); status.textContent = ''; saveDraft(); });
@@ -150,6 +170,10 @@
       if (!kpp.disabled && data.kpp && !/^\d{9}$/.test(data.kpp)) kpp.setCustomValidity('КПП должен содержать 9 цифр.');
       const phoneDigits = data.phone.replace(/\D/g, '');
       if (phoneDigits.length < 7 || phoneDigits.length > 15 || !/^[+\d\s()\-]+$/.test(data.phone)) form.elements.phone.setCustomValidity('Укажите телефон с кодом страны.');
+      if (data.recipientType==='other') {
+        const digits=data.receiverPhone.replace(/\D/g,'');
+        if(digits.length<7 || digits.length>15 || !/^[+\d\s()\-]+$/.test(data.receiverPhone)) receiverPhone.setCustomValidity('Укажите телефон получателя с кодом страны.');
+      }
       if (!form.reportValidity()) { status.textContent = 'Проверьте обязательные поля и формат данных.'; return; }
       const latest = getOrder();
       if (!latest) { status.textContent = 'Оформление недоступно: проверьте наличие товаров и минимум 5 000 ₽ до скидок.'; return; }

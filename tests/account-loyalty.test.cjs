@@ -26,7 +26,7 @@ test('presentation sign-in opens the account in one click with no credential dia
  assert.equal(window.document.querySelector('[data-demo-login]'),null);assert.equal(window.document.querySelector('#auth-login'),null);assert.equal(window.document.querySelector('#auth-password'),null);
  assert.equal(window.document.querySelector('[data-account-guest]').hidden,true);
  assert.equal(window.PolyarikLoyalty.profile().newCustomer,true);
- assert.equal(window.PolyarikLoyalty.pricing(5000,0,0).total,4750);
+ assert.equal(window.PolyarikLoyalty.pricing(5000,0,0).total,5000);
  assert.equal(window.document.querySelector('[data-current-order]').hidden,true);
 });
 test('signing in again does not restore an already used first-order discount',()=>{
@@ -38,7 +38,7 @@ test('signing in again does not restore an already used first-order discount',()
 test('new profile starts with zero balance and no fictitious cashback credit',()=>{
  const window=account('new');const panel=window.document.querySelector('[data-account-panel="bonuses"]');
  assert.equal(panel.querySelector('[data-bonus-balance]').textContent,'0 ₽');assert.equal(panel.querySelector('[data-bonus-history]').children.length,0);
- assert.match(panel.querySelector('[data-welcome-status]').textContent,/5%/);
+ assert.equal(panel.querySelector('[data-welcome-status]'),null);
 });
 test('compact account navigation expands and collapses accessibly',()=>{
  const window=account('demo');const button=window.document.querySelector('[data-account-menu-toggle]');const nav=window.document.querySelector('#account-navigation');
