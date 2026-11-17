@@ -1342,9 +1342,9 @@ body#main :is(.btn, button)::after {
 .proto-checkout-field:has([name="legalAddress"]), .proto-checkout-field:has(textarea) { grid-column: 1 / -1; }
 .proto-checkout-overview { min-width: 0; padding: 20px 16px; background: #fafafa; border: 1px solid #ddd; }
 .proto-checkout-overview h3 { margin: 0 0 16px; font-size: 18px; }
-.proto-checkout-items { list-style: none; margin: 0 0 20px; padding: 0; }
-.proto-checkout-items li { margin: 0; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
-.proto-checkout-items li::before { content: none; }
+#proto-checkout ul.proto-checkout-items { list-style: none; margin: 0 0 20px; padding: 0; }
+#proto-checkout ul.proto-checkout-items > li { list-style: none; margin: 0; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+#proto-checkout ul.proto-checkout-items > li::before { content: none; display: none; }
 .proto-checkout-correct { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; line-height: 1.6; cursor: pointer; }
 .proto-checkout-correct input[type="checkbox"] { position: static !important; opacity: 1 !important; appearance: auto !important; display: block !important; width: 20px !important; height: 20px !important; flex: 0 0 20px; margin: 2px 0 0; }
 .proto-checkout-notice { padding: 12px; border-left: 3px solid #777; background: #f2f2f2; font-size: 12px; line-height: 1.6; }
