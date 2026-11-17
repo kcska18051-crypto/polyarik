@@ -102,21 +102,21 @@
     field(contact, 'phone', 'Телефон', {type:'tel', autocomplete:'tel', maxLength:40, hint:'С кодом страны, например +7 или +375.'});
     field(contact, 'email', 'Email', {type:'email', autocomplete:'email', maxLength:254});
     const shipping = group(page ? 'Способ доставки' : '3. Доставка транспортной компанией'); shipping.id = 'order-delivery';
-    const carrier = field(shipping, 'carrier', 'Транспортная компания', {type:'select',options:[['','Выберите транспортную компанию'],['СДЭК','СДЭК'],['ПЭК','ПЭК'],['Деловые линии','Деловые линии'],['Ozon','Ozon'],['other','Другой способ']],hint:'Стоимость и сроки доставки согласовываются индивидуально с менеджером.'});
-    const carrierOther = field(shipping,'carrierOther','Укажите другой способ доставки',{maxLength:120});
+    const carrier = field(shipping, 'carrier', 'Транспортная компания', {type:'select',options:[['','Выберите транспортную компанию'],['СДЭК','СДЭК'],['ПЭК','ПЭК'],['Деловые линии','Деловые линии'],['Ozon','Ozon'],['other','Другая компания']],hint:'Стоимость и сроки доставки согласовываются индивидуально с менеджером.'});
+    const carrierOther = field(shipping,'carrierOther','Название транспортной компании',{maxLength:120});
     if (draft.carrier && ![...carrier.options].some(option=>option.value===draft.carrier)) { carrier.value='other';carrierOther.value=String(draft.carrierName || draft.carrier); }
-    function updateCarrier() { const other=carrier.value==='other'; carrierOther.disabled=!other;carrierOther.required=other;carrierOther.closest('.proto-checkout-field').hidden=!other;carrierOther.setCustomValidity(''); }
+    const ozonNote=element('p','Тариф Ozon уточняется менеджером после согласования условий доставки.','proto-order-section-note'); shipping.append(ozonNote);
+    function updateCarrier() { ozonNote.hidden=carrier.value!=='Ozon'; const other=carrier.value==='other'; carrierOther.disabled=!other;carrierOther.required=other;carrierOther.closest('.proto-checkout-field').hidden=!other;carrierOther.setCustomValidity(''); }
     updateCarrier();carrier.addEventListener('change',updateCarrier);
     field(shipping, 'city', 'Город доставки', {maxLength:120, autocomplete:'address-level2'});
     field(shipping, 'deliveryAddress', 'Адрес или терминал ТК', {required:false, maxLength:500});
     field(shipping,'insurance','Страховка отправления',{type:'select',options:[['','Выберите вариант'],['yes','Нужна'],['no','Не нужна']],hint:'Условия и стоимость страховки согласовываются с менеджером.'});
     const recipientType = field(shipping,'recipientType','Получатель',{type:'select',defaultValue:'contact',options:[['contact','Контактное лицо заказа'],['other','Другой получатель']]});
     const recipientFields = element('div',undefined,'proto-recipient-fields');shipping.append(recipientFields);
-    const surname=field(recipientFields,'receiverSurname','Фамилия получателя',{maxLength:80,autocomplete:'family-name'});
-    const name=field(recipientFields,'receiverName','Имя получателя',{maxLength:80,autocomplete:'given-name'});
-    const patronymic=field(recipientFields,'receiverPatronymic','Отчество получателя (при наличии)',{required:false,maxLength:80,autocomplete:'additional-name'});
+    const receiverFullName=field(recipientFields,'receiverFullName','ФИО получателя',{maxLength:240,autocomplete:'name'});
+    if (!draft.receiverFullName) receiverFullName.value=[draft.receiverSurname,draft.receiverName,draft.receiverPatronymic].filter(Boolean).join(' ');
     const receiverPhone=field(recipientFields,'receiverPhone','Телефон получателя',{type:'tel',maxLength:40,autocomplete:'tel'});
-    function updateRecipient() { const other=recipientType.value==='other';recipientFields.hidden=!other;for(const input of [surname,name,patronymic,receiverPhone]){input.disabled=!other;input.required=other && input!==patronymic;input.setCustomValidity('');} }
+    function updateRecipient() { const other=recipientType.value==='other';recipientFields.hidden=!other;for(const input of [receiverFullName,receiverPhone]){input.disabled=!other;input.required=other;input.setCustomValidity('');} }
     updateRecipient();recipientType.addEventListener('change',updateRecipient);
     field(shipping, 'comment', 'Комментарий к заказу', {required:false, type:'textarea', maxLength:1500});
     if (page) {
@@ -153,7 +153,7 @@
       for (const input of form.elements) if (input.name && input.name !== 'correctDetails' && !input.disabled) data[input.name] = input.value.trim();
       data.kpp ||= '';
       data.carrierName = data.carrier==='other' ? data.carrierOther : data.carrier;
-      data.recipientName = data.recipientType==='other' ? [data.receiverSurname,data.receiverName,data.receiverPatronymic].filter(Boolean).join(' ') : data.contact;
+      data.recipientName = data.recipientType==='other' ? data.receiverFullName : data.contact;
       data.recipientPhone = data.recipientType==='other' ? data.receiverPhone : data.phone;
       return data;
     };
