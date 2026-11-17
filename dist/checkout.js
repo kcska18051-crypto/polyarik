@@ -106,7 +106,7 @@
     if (page) {
       shipping.append(element('p','Доставка транспортной компанией. Стоимость и сроки согласуются индивидуально с менеджером.','proto-order-section-note'));
       const payment = group('Способ оплаты'); payment.id = 'order-payment';
-      payment.append(element('strong','Оплата по счёту на расчётный счёт'),element('p','Счёт выставляется после согласования заказа с менеджером.','proto-order-section-note'));
+      payment.append(element('strong','Безналичный расчёт'),element('p','Оплата по счёту на расчётный счёт. Счёт выставляется после согласования заказа с менеджером.','proto-order-section-note'));
     }
     const overview = element('section', undefined, 'proto-checkout-overview');
     const priceDetails = element('div');
@@ -127,7 +127,7 @@
       const aside = element('aside',undefined,'proto-order-summary'); aside.setAttribute('aria-label','Итог заказа');
       const summary = dialog.querySelector('[data-checkout-summary]'); summary.hidden = false;
       const deliveryLink = element('a','Доставка: транспортной компанией'); deliveryLink.href='#order-delivery';
-      const paymentLink = element('a','Оплата: по счёту'); paymentLink.href='#order-payment';
+      const paymentLink = element('a','Оплата: безналичный расчёт'); paymentLink.href='#order-payment';
       const cartLink = element('a','Изменить корзину или промокод'); cartLink.href='cart.html';
       aside.append(element('h2','Итого'),summary,priceDetails,element('p','Доставка согласуется индивидуально и не включена в сумму товаров.'),deliveryLink,paymentLink,cartLink,confirmation,submit,status,notice);
       form.classList.add('proto-order-layout'); form.append(left,aside);
