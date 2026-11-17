@@ -104,7 +104,7 @@
     field(shipping, 'deliveryAddress', 'Адрес или терминал ТК', {required:false, maxLength:500});
     field(shipping, 'comment', 'Комментарий к заказу', {required:false, type:'textarea', maxLength:1500});
     if (page) {
-      shipping.append(element('p','Доставка транспортной компанией. Стоимость и сроки согласуются индивидуально с менеджером.','proto-order-section-note'));
+      shipping.append(element('strong','Транспортная компания'),element('p','Стоимость и сроки доставки согласовываются индивидуально с менеджером.','proto-order-section-note'));
       const payment = group('Способ оплаты'); payment.id = 'order-payment';
       payment.append(element('strong','Безналичный расчёт'),element('p','Оплата по счёту на расчётный счёт. Счёт выставляется после согласования заказа с менеджером.','proto-order-section-note'));
     }
@@ -126,10 +126,10 @@
       const left = element('div',undefined,'proto-order-fields'); left.append(...form.childNodes);
       const aside = element('aside',undefined,'proto-order-summary'); aside.setAttribute('aria-label','Итог заказа');
       const summary = dialog.querySelector('[data-checkout-summary]'); summary.hidden = false;
-      const deliveryLink = element('a','Доставка: транспортной компанией'); deliveryLink.href='#order-delivery';
+      const deliveryLink = element('a','Доставка: Транспортная компания'); deliveryLink.href='#order-delivery';
       const paymentLink = element('a','Оплата: безналичный расчёт'); paymentLink.href='#order-payment';
       const cartLink = element('a','Изменить корзину или промокод'); cartLink.href='cart.html';
-      aside.append(element('h2','Итого'),summary,priceDetails,element('p','Доставка согласуется индивидуально и не включена в сумму товаров.'),deliveryLink,paymentLink,cartLink,confirmation,submit,status,notice);
+      aside.append(element('h2','Итого'),summary,priceDetails,element('p','Стоимость и сроки доставки согласовываются индивидуально с менеджером. Доставка не включена в сумму товаров.'),deliveryLink,paymentLink,cartLink,confirmation,submit,status,notice);
       form.classList.add('proto-order-layout'); form.append(left,aside);
     } else form.append(confirmation, notice, status, submit);
     const customerData = () => {

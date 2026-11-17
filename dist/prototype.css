@@ -15,7 +15,7 @@ body.proto-order-site #proto-checkout.proto-order-page { width: 100%; max-width:
 .proto-order-summary .btn { width: 100%; margin: 0; min-height: 48px; white-space: normal; }
 .proto-order-summary .proto-checkout-notice { font-size: 12px; }
 .proto-order-section-note { grid-column: 1 / -1; margin: 0; font-size: 14px; line-height: 1.7; }
-.proto-order-fields #order-payment strong { grid-column: 1 / -1; }
+.proto-order-fields :is(#order-payment, #order-delivery) > strong { grid-column: 1 / -1; }
 .proto-order-fields :is(#order-delivery, #order-payment) { scroll-margin-top: 110px; }
 @media(max-width:991px){.proto-order-layout { grid-template-columns: minmax(0,1fr); gap: 24px; }.proto-order-summary { position: static; }.proto-order-layout .proto-order-fields > fieldset { padding: 20px 16px; }body.proto-order-site #navigation .breadcrumbs { white-space: normal !important; overflow: visible !important; line-height: 1.6; }}
 .proto-welcome-note, .proto-discount-scale .proto-welcome-note { margin: 16px 0 0; color: #555; font-size: 13px; line-height: 1.6; }
