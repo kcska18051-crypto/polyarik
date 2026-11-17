@@ -4,10 +4,10 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.join(__dirname,'..','dist');
-function account(identity){
+function account(identity,{signedIn=true}={}){
  const console=new VirtualConsole();
  const {window}=new JSDOM(fs.readFileSync(path.join(root,'account.html'),'utf8'),{url:'http://localhost/account.html?view=bonuses',runScripts:'outside-only',virtualConsole:console});
- window.localStorage.setItem('polyarik-demo-account','1');
+ if(signedIn)window.localStorage.setItem('polyarik-demo-account','1');
  window.localStorage.setItem('polyarik-loyalty-identity',identity);
  window.eval(fs.readFileSync(path.join(root,'loyalty.js'),'utf8'));
  window.eval(fs.readFileSync(path.join(root,'account.js'),'utf8'));
@@ -18,6 +18,13 @@ test('bonus account uses the same demo balance and marks its history as test dat
  assert.equal(panel.hidden,false);assert.match(panel.querySelector('[data-bonus-balance]').textContent,/1\s?500/);
  assert.equal(panel.querySelector('[data-bonus-demo]').hidden,false);assert.match(panel.querySelector('[data-bonus-history]').textContent,/Тестовое/);
  assert.equal(window.document.querySelector('[data-account-view="bonuses"]').getAttribute('aria-current'),'page');
+});
+test('presentation sign-in opens the account in one click with no credential dialog',()=>{
+ const window=account('demo',{signedIn:false});assert.equal(window.document.querySelector('[data-account-guest]').hidden,false);
+ window.document.querySelector('[data-account-open]').click();
+ assert.equal(window.sessionStorage.getItem('polyarik-demo-account'),'1');assert.equal(window.document.querySelector('[data-account-layout]').hidden,false);
+ assert.equal(window.document.querySelector('[data-demo-login]'),null);assert.equal(window.document.querySelector('#auth-login'),null);assert.equal(window.document.querySelector('#auth-password'),null);
+ assert.equal(window.document.querySelector('[data-account-guest]').hidden,true);
 });
 test('new profile starts with zero balance and no fictitious cashback credit',()=>{
  const window=account('new');const panel=window.document.querySelector('[data-account-panel="bonuses"]');

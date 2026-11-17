@@ -1,7 +1,5 @@
 (() => {
 const sessionKey = 'polyarik-demo-account';
-const demoLogin = 'demo@polyarik.test';
-const demoPassword = 'Demo2026';
 const accountLayout = document.querySelector('[data-account-layout]');
 const accountGuest = document.querySelector('[data-account-guest]');
 const registration = document.querySelector('[data-account-registration]');
@@ -15,7 +13,6 @@ const accountViews = {
   history: 'История заказов',
   bonuses: 'Бонусы и кэшбэк',
 };
-let dialog;
 document.querySelector('[data-account-menu-toggle]')?.addEventListener('click', event => {
   const button = event.currentTarget;
   const expanded = button.getAttribute('aria-expanded') !== 'true';
@@ -86,7 +83,6 @@ function signIn(remember, identity = 'demo') {
   window.PolyarikLoyalty.startProfile(identity);
   (remember ? localStorage : sessionStorage).setItem(sessionKey, '1');
   if (accountLayout) {
-    dialog?.close();
     showAccount();
     document.querySelector('#pagetitle').tabIndex = -1;
     document.querySelector('#pagetitle').focus();
@@ -95,78 +91,7 @@ function signIn(remember, identity = 'demo') {
   }
 }
 
-function createDialog() {
-  const modal = document.createElement('dialog');
-  modal.className = 'proto-auth-dialog';
-  modal.setAttribute('aria-labelledby', 'proto-auth-title');
-  modal.innerHTML = [
-    '<button type="button" class="proto-auth-close" aria-label="Закрыть окно входа">×</button>',
-    '<h2 id="proto-auth-title">Личный кабинет</h2>',
-    '<form data-demo-login>',
-    '  <div class="proto-auth-field"><label for="auth-login">Логин <span aria-hidden="true">*</span></label><input id="auth-login" autocomplete="username" maxlength="254" required autofocus></div>',
-    '  <div class="proto-auth-field"><label for="auth-password">Пароль <span aria-hidden="true">*</span></label><div class="proto-auth-password"><input id="auth-password" type="password" autocomplete="current-password" required><button type="button" data-password-for="auth-password" aria-label="Показать пароль" aria-pressed="false"><svg width="19" height="16" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M2 9s4-6 10-6 10 6 10 6-4 6-10 6S2 9 2 9Z"/><circle cx="12" cy="9" r="2.4"/></svg></button></div></div>',
-    '  <div class="proto-auth-options"><label class="proto-auth-remember"><input type="checkbox" id="auth-remember">Запомнить меня</label><button class="proto-auth-text-action" type="button" data-auth-recovery>Забыли пароль?</button></div>',
-    '  <p class="proto-auth-required"><span aria-hidden="true">*</span> — обязательные поля</p>',
-    '  <div class="proto-auth-actions"><button type="submit" class="btn btn-default">Войти</button><a href="registration.html" class="btn btn-transparent-border-color">Регистрация</a></div>',
-    '  <p class="proto-auth-demo muted">Демо-доступ: <code>' + demoLogin + '</code> / <code>' + demoPassword + '</code></p>',
-    '  <p class="proto-auth-error" role="status"></p>',
-    '</form>',
-    '<form data-demo-recovery hidden>',
-    '  <div class="proto-auth-field"><label for="auth-recovery-email">E-mail <span aria-hidden="true">*</span></label><input id="auth-recovery-email" type="email" autocomplete="email" required></div>',
-    '  <div class="proto-auth-actions"><button type="submit" class="btn btn-default">Восстановить пароль</button><button class="proto-auth-text-action" type="button" data-auth-back>Вернуться ко входу</button></div>',
-    '  <p class="proto-auth-demo muted" role="status"></p>',
-    '</form>'
-  ].join('');
-  document.body.append(modal);
-
-  const login = modal.querySelector('[data-demo-login]');
-  const recovery = modal.querySelector('[data-demo-recovery]');
-  const title = modal.querySelector('h2');
-  const password = modal.querySelector('#auth-password');
-  const username = modal.querySelector('#auth-login');
-  const status = login.querySelector('[role="status"]');
-  function showRecovery(open) {
-    login.hidden = open;
-    recovery.hidden = !open;
-    title.textContent = open ? 'Восстановление пароля' : 'Личный кабинет';
-    (open ? recovery.querySelector('input') : username).focus();
-  }
-  modal.querySelector('.proto-auth-close').addEventListener('click', () => modal.close());
-  modal.querySelector('[data-auth-recovery]').addEventListener('click', () => showRecovery(true));
-  modal.querySelector('[data-auth-back]').addEventListener('click', () => showRecovery(false));
-  modal.addEventListener('close', () => {
-    login.reset();
-    recovery.reset();
-    login.hidden = false;
-    recovery.hidden = true;
-    title.textContent = 'Личный кабинет';
-    password.type = 'password';
-    const toggle = modal.querySelector('[data-password-for]');
-    toggle.setAttribute('aria-pressed', 'false');
-    toggle.setAttribute('aria-label', 'Показать пароль');
-    status.textContent = '';
-    recovery.querySelector('[role="status"]').textContent = '';
-  });
-  login.addEventListener('input', () => { status.textContent = ''; });
-  login.addEventListener('submit', event => {
-    event.preventDefault();
-    if (username.value.trim().toLowerCase() !== demoLogin || password.value !== demoPassword) {
-      status.textContent = 'Для входа в прототип используйте демо-доступ, указанный ниже формы.';
-      return;
-    }
-    signIn(modal.querySelector('#auth-remember').checked);
-  });
-  recovery.addEventListener('submit', event => {
-    event.preventDefault();
-    recovery.querySelector('[role="status"]').textContent = 'Восстановление пароля работает в демонстрационном режиме.';
-  });
-  return modal;
-}
-
-function openLogin() {
-  dialog ??= createDialog();
-  if (!dialog.open) dialog.showModal();
-}
+function openLogin() { signIn(false); }
 
 document.addEventListener('click', event => {
   const toggle = event.target.closest('[data-password-for]');
