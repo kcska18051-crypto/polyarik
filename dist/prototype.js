@@ -554,8 +554,20 @@ function renderDiscountScale(subtotal) {
     ? 'Добавьте ещё ' + money(next.from - subtotal) + ', чтобы получить скидку ' + next.rate + '%.'
     : 'У вас максимальная скидка за объём — 12%.'));
   section.append(savedElement('p', 'muted', 'Скидка за объём суммируется с промокодом. Обе скидки считаем от стоимости товаров до скидок.'));
-  section.append(savedElement('p', 'muted', 'На первый заказ компании — 5%. Применяем более выгодный вариант: 5% или скидку за объём вместе с промокодом.'));
+  section.append(savedElement('p', 'muted', 'На первый заказ компании — дополнительная скидка 5%. Совместимость с другими скидками уточняется.'));
   return section;
+}
+
+function renderWelcomeOffer() {
+  if (window.PolyarikLoyalty.profile()?.newCustomer === false) return null;
+  const banner = savedElement('section', 'proto-welcome-offer'); banner.dataset.welcomeOffer = '';
+  banner.setAttribute('aria-label', 'Скидка на первый заказ');
+  banner.append(savedElement('strong', 'proto-welcome-offer-rate', '−5%'));
+  const copy = savedElement('div');
+  copy.append(savedElement('h3', '', 'Дополнительная скидка 5% на первый заказ'),
+    savedElement('p', '', 'Для новых клиентов «Полярик».'),
+    savedElement('small', '', 'Условия суммирования с другими скидками уточняются.'));
+  banner.append(copy); return banner;
 }
 
 function renderCartLoyalty(pricing) {
@@ -675,6 +687,7 @@ function renderCart(focus) {
   if (!entries.length) {
     sessionStorage.removeItem(cartPromoKey);
     savedPage.replaceChildren(savedElement('p', 'proto-saved-empty', 'Корзина пуста.'));
+    const welcome = renderWelcomeOffer(); if (welcome) savedPage.append(welcome);
     window.PolyarikCheckout.appendLastOrderLink(savedPage);
     if (focus) savedPage.nextElementSibling.focus();
     return;
@@ -760,6 +773,7 @@ function renderCart(focus) {
   const totals = savedElement('aside', 'proto-cart-summary');
   const payable = pricing;
   totals.append(savedElement('div', 'proto-cart-total-label', 'Итого:'), savedElement('strong', 'proto-saved-total', money(payable.total)), savedElement('p', 'muted', 'Упаковок: ' + count));
+  const welcome = renderWelcomeOffer(); if (welcome) totals.append(welcome);
   if (pricing.subtotal > 0) {
     totals.append(renderPricingBreakdown(pricing));
     if (pricing.subtotal < cartMinimum) {
@@ -822,7 +836,7 @@ function openCheckout(title) {
       }
       renderCart();
     },
-    renderBreakdown:renderPricingBreakdown, renderScale:renderDiscountScale, renderTerms:renderOrderTerms
+    renderBreakdown:renderPricingBreakdown, renderScale:renderDiscountScale, renderTerms:renderOrderTerms, renderWelcomeOffer
   });
   if (!dialog.open) dialog.showModal();
 }

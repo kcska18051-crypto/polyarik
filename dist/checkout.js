@@ -49,7 +49,7 @@
     if (!dialog.open) dialog.showModal();
     dialog.querySelector('h2').tabIndex = -1; dialog.querySelector('h2').focus();
   }
-  function open({dialog, getOrder, onConfirmed, renderBreakdown, renderScale, renderTerms}) {
+  function open({dialog, getOrder, onConfirmed, renderBreakdown, renderScale, renderTerms, renderWelcomeOffer}) {
     let snapshot = getOrder();
     if (!snapshot) return;
     const box = content(dialog);
@@ -147,7 +147,8 @@
       }
       showConfirmation(dialog, order);
     });
-    box.replaceChildren(form);
+    const welcome = renderWelcomeOffer?.();
+    box.replaceChildren(...(welcome ? [welcome] : []), form);
   }
   function appendLastOrderLink(container) {
     const order = read(lastOrderKey);
