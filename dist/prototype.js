@@ -74,6 +74,10 @@ const catalogQuery = params.get('q')?.trim() || '';
 fetch('products.json?v=5').then(response => response.json()).then(data => {
   products = data;
   renderCart();
+  if (document.querySelector('[data-checkout-page]')) {
+    const root = document.querySelector('[data-checkout-page]');
+    if (params.get('receipt') !== 'last' || !window.PolyarikCheckout.showLastOrder(root)) openCheckout('Оформление заказа');
+  }
   renderSavedList();
   if (catalogRoot) {
     catalogTree.then(renderCatalog);
@@ -775,8 +779,11 @@ function renderCart(focus) {
       totals.append(warning);
     }
     const quickBuy = savedButton('Купить в 1 клик', 'btn btn-transparent-border-color', () => openCheckout('Купить в 1 клик', payable.total));
-    const checkout = savedButton('Перейти к оформлению', 'btn btn-default', () => openCheckout('Оформление заказа', payable.total));
-    quickBuy.disabled = checkout.disabled = hasUnavailableProduct || pricing.subtotal < cartMinimum;
+    const checkout = savedElement('a', 'btn btn-default', 'Перейти к оформлению'); checkout.dataset.checkoutLink = '';
+    const blocked = hasUnavailableProduct || pricing.subtotal < cartMinimum;
+    quickBuy.disabled = blocked;
+    if (blocked) { checkout.setAttribute('aria-disabled','true'); checkout.tabIndex = -1; }
+    else checkout.href = 'order.html';
     totals.append(renderCartPromo(cartPromoApplied()), renderCartLoyalty(pricing), renderOrderTerms(), quickBuy, checkout);
     if (hasUnavailableProduct) totals.append(savedElement('p', 'muted', 'Удалите товары, которых нет в наличии, чтобы оформить заказ.'));
   }
@@ -798,6 +805,13 @@ function openCheckout(title) {
   });
   if (pricing.subtotal < cartMinimum || unavailable) {
     renderCart();
+    const page = document.querySelector('[data-checkout-page]');
+    if (page) {
+      const message = savedElement('p','proto-cart-minimum',unavailable ? 'Удалите недоступные товары в корзине. Минимальный заказ — 5 000 ₽ до скидок.' : 'Оформление доступно от 5 000 ₽ до скидок. Вернитесь в корзину и добавьте товары.');
+      const back = savedElement('a','btn btn-default','В корзину'); back.href = 'cart.html';
+      page.querySelector('[data-checkout-details]').replaceChildren(message,back);
+      const summary = page.querySelector('[data-checkout-summary]'); if (summary) summary.hidden = true;
+    }
     return;
   }
   const dialog = document.querySelector('#proto-checkout');
@@ -831,7 +845,7 @@ function openCheckout(title) {
     },
     renderBreakdown:renderPricingBreakdown, renderScale:renderDiscountScale, renderTerms:renderOrderTerms
   });
-  if (!dialog.open) dialog.showModal();
+  if (dialog.tagName === 'DIALOG' && !dialog.open) dialog.showModal();
 }
 
 addEventListener('storage', event => {

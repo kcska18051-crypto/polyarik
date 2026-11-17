@@ -24,15 +24,16 @@ test('volume discount and promo are added on the original subtotal',()=>{
 });
 test('both checkout paths are blocked below 5000 before discounts',()=>{
  const app=setup();cart(app,9);
- const buttons=[...app.document.querySelectorAll('.proto-cart-summary button')].filter(b=>/оформлению|1 клик/i.test(b.textContent));
- assert.equal(buttons.length,2);assert.ok(buttons.every(b=>b.disabled));
+ const buttons=[...app.document.querySelectorAll('.proto-cart-summary button, .proto-cart-summary [data-checkout-link]')].filter(b=>/оформлению|1 клик/i.test(b.textContent));
+ assert.equal(buttons.length,2);assert.ok(buttons.every(b=>b.disabled || b.getAttribute('aria-disabled')==='true'));
  assert.match(text(app.savedPage),/500 ₽/);
  require('node:vm').runInContext("openCheckout('Оформление заказа', 999999)",app.context);
  assert.equal(app.document.querySelector('#proto-checkout').open,false);
 });
 test('5000 before discounts permits checkout even if discounted total is 4500',()=>{
  const app=setup();cart(app,10,true);
- const button=[...app.document.querySelectorAll('.proto-cart-summary button')].find(b=>/оформлению/i.test(b.textContent));
+ const button=[...app.document.querySelectorAll('.proto-cart-summary button')].find(b=>/1 клик/i.test(b.textContent));
+ assert.equal(app.document.querySelector('[data-checkout-link]').getAttribute('href'),'order.html');
  assert.equal(button.disabled,false);button.click();
  const dialog=app.document.querySelector('#proto-checkout');
  assert.equal(dialog.open,true);assert.match(text(dialog),/4 500 ₽/);
@@ -43,7 +44,7 @@ test('discount scale marks the current tier in cart and checkout',()=>{
  const app=setup();cart(app,100);
  const selected=app.document.querySelector('.proto-discount-scale [aria-current="step"]');
  assert.match(text(selected),/3%/);
- [...app.document.querySelectorAll('.proto-cart-summary button')].find(b=>/оформлению/i.test(b.textContent)).click();
+ [...app.document.querySelectorAll('.proto-cart-summary button')].find(b=>/1 клик/i.test(b.textContent)).click();
  assert.match(text(app.document.querySelector('#proto-checkout [aria-current="step"]')),/3%/);
 });
 
@@ -55,6 +56,6 @@ test('removing a promo preserves the volume discount and lowering quantity reset
  input.value='9';input.dispatchEvent(new app.window.Event('change'));
  assert.equal(text(app.document.querySelector('.proto-saved-total')),'4 500 ₽');
  assert.equal(app.document.querySelector('.proto-discount-scale [aria-current]'),null);
- const button=[...app.document.querySelectorAll('.proto-cart-summary button')].find(b=>/оформлению/i.test(b.textContent));
- assert.equal(button.disabled,true);
+ const button=app.document.querySelector('[data-checkout-link]');
+ assert.equal(button.getAttribute('aria-disabled'),'true');assert.equal(button.hasAttribute('href'),false);
 });
