@@ -1,10 +1,5 @@
 html{filter:grayscale(1)}
-.proto-welcome-offer { display: flex; align-items: center; gap: 16px; padding: 18px 16px; margin: 16px 0; border: 1px solid #ccc; background: #fff; }
-.proto-welcome-offer-rate { flex: 0 0 auto; font-size: 44px; line-height: 1.1; letter-spacing: -2px; color: #333; }
-.proto-welcome-offer h3 { margin: 0 0 8px; font-size: 16px; line-height: 1.5; color: #333; }
-.proto-welcome-offer p { margin: 0 0 6px; font-size: 13px; }
-.proto-welcome-offer small { display: block; font-size: 12px; line-height: 1.5; color: #666; }
-@media(max-width:479px){.proto-welcome-offer { gap: 12px; padding: 14px 12px; }.proto-welcome-offer-rate { font-size: 36px; }.proto-welcome-offer h3 { font-size: 14px; }}
+.proto-welcome-note, .proto-discount-scale .proto-welcome-note { margin: 16px 0 0; color: #555; font-size: 13px; line-height: 1.6; }
 .proto-review-form { display: grid; gap: 10px; max-width: 620px; margin-top: 20px; padding: 20px; border: 1px solid #ddd; }
 .proto-review-form[hidden] { display: none !important; }
 .proto-review-form :is(input, select, textarea) { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #ccc; background: #fff; color: #333; font: inherit; font-size: 16px; box-sizing: border-box; }

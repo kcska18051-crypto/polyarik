@@ -554,20 +554,14 @@ function renderDiscountScale(subtotal) {
     ? 'Добавьте ещё ' + money(next.from - subtotal) + ', чтобы получить скидку ' + next.rate + '%.'
     : 'У вас максимальная скидка за объём — 12%.'));
   section.append(savedElement('p', 'muted', 'Скидка за объём суммируется с промокодом. Обе скидки считаем от стоимости товаров до скидок.'));
-  section.append(savedElement('p', 'muted', 'На первый заказ компании — дополнительная скидка 5%. Совместимость с другими скидками уточняется.'));
+  const welcome = renderWelcomeOffer(); if (welcome) section.append(welcome);
   return section;
 }
 
 function renderWelcomeOffer() {
   if (window.PolyarikLoyalty.profile()?.newCustomer === false) return null;
-  const banner = savedElement('section', 'proto-welcome-offer'); banner.dataset.welcomeOffer = '';
-  banner.setAttribute('aria-label', 'Скидка на первый заказ');
-  banner.append(savedElement('strong', 'proto-welcome-offer-rate', '−5%'));
-  const copy = savedElement('div');
-  copy.append(savedElement('h3', '', 'Дополнительная скидка 5% на первый заказ'),
-    savedElement('p', '', 'Для новых клиентов «Полярик».'),
-    savedElement('small', '', 'Условия суммирования с другими скидками уточняются.'));
-  banner.append(copy); return banner;
+  const note = savedElement('p', 'proto-welcome-note muted', 'На первый заказ компании действует дополнительная скидка 5%. Условия суммирования с другими скидками уточняются.');
+  note.dataset.welcomeOffer = ''; return note;
 }
 
 function renderCartLoyalty(pricing) {
@@ -576,7 +570,7 @@ function renderCartLoyalty(pricing) {
   const customer = window.PolyarikLoyalty.profile();
   box.append(savedElement('h3', '', 'Бонусы и кэшбэк'));
   if (!customer) {
-    box.append(savedElement('p', '', '5% на первый заказ компании. Зарегистрируйтесь или войдите, чтобы увидеть доступные скидки и бонусы.'));
+    box.append(savedElement('p', '', 'Зарегистрируйтесь или войдите, чтобы увидеть доступные скидки и бонусы.'));
     const login = savedElement('a', '', 'Войти в кабинет');
     login.href = 'account.html'; login.dataset.accountLink = '';
     const register = savedElement('a', '', 'Зарегистрироваться'); register.href = 'registration.html';
@@ -773,7 +767,6 @@ function renderCart(focus) {
   const totals = savedElement('aside', 'proto-cart-summary');
   const payable = pricing;
   totals.append(savedElement('div', 'proto-cart-total-label', 'Итого:'), savedElement('strong', 'proto-saved-total', money(payable.total)), savedElement('p', 'muted', 'Упаковок: ' + count));
-  const welcome = renderWelcomeOffer(); if (welcome) totals.append(welcome);
   if (pricing.subtotal > 0) {
     totals.append(renderPricingBreakdown(pricing));
     if (pricing.subtotal < cartMinimum) {
@@ -836,7 +829,7 @@ function openCheckout(title) {
       }
       renderCart();
     },
-    renderBreakdown:renderPricingBreakdown, renderScale:renderDiscountScale, renderTerms:renderOrderTerms, renderWelcomeOffer
+    renderBreakdown:renderPricingBreakdown, renderScale:renderDiscountScale, renderTerms:renderOrderTerms
   });
   if (!dialog.open) dialog.showModal();
 }
