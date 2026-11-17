@@ -14,9 +14,9 @@
     const data = saved && typeof saved === 'object' ? saved : fallback;
     return {newCustomer:data.newCustomer === true, balance:whole(data.balance), history:Array.isArray(data.history) ? data.history : [], demo:identity === 'demo'};
   }
-  function startProfile(identity) {
+  function startProfile(identity, reset = false) {
     localStorage.setItem(identityKey, identity === 'new' ? 'new' : 'demo');
-    if (identity === 'new') localStorage.setItem('polyarik-loyalty-new', JSON.stringify({newCustomer:true, balance:0, history:[]}));
+    if (identity === 'new' && (reset || !localStorage.getItem('polyarik-loyalty-new'))) localStorage.setItem('polyarik-loyalty-new', JSON.stringify({newCustomer:true, balance:0, history:[]}));
     sessionStorage.removeItem(requestedKey);
   }
   function pricing(subtotal, volumeRate, promoRate) {

@@ -25,6 +25,15 @@ test('presentation sign-in opens the account in one click with no credential dia
  assert.equal(window.sessionStorage.getItem('polyarik-demo-account'),'1');assert.equal(window.document.querySelector('[data-account-layout]').hidden,false);
  assert.equal(window.document.querySelector('[data-demo-login]'),null);assert.equal(window.document.querySelector('#auth-login'),null);assert.equal(window.document.querySelector('#auth-password'),null);
  assert.equal(window.document.querySelector('[data-account-guest]').hidden,true);
+ assert.equal(window.PolyarikLoyalty.profile().newCustomer,true);
+ assert.equal(window.PolyarikLoyalty.pricing(5000,0,0).total,4750);
+ assert.equal(window.document.querySelector('[data-current-order]').hidden,true);
+});
+test('signing in again does not restore an already used first-order discount',()=>{
+ const window=account('new');window.PolyarikLoyalty.completeOrder({bonusSpent:0},'ДЕМО-TEST');
+ window.localStorage.removeItem('polyarik-demo-account');window.sessionStorage.removeItem('polyarik-demo-account');
+ window.document.querySelector('[data-account-open]').click();assert.equal(window.PolyarikLoyalty.profile().newCustomer,false);
+ assert.equal(window.localStorage.getItem('polyarik-loyalty-identity'),'new');
 });
 test('new profile starts with zero balance and no fictitious cashback credit',()=>{
  const window=account('new');const panel=window.document.querySelector('[data-account-panel="bonuses"]');

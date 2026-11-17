@@ -44,11 +44,12 @@ function showAccount() {
   document.querySelector('[data-account-parent]').hidden = view === 'home';
   document.title = title + ' — Полярик';
   const cancelled = localStorage.getItem(cancelledOrderKey) === '1';
+  const exampleOrders = localStorage.getItem('polyarik-loyalty-identity') !== 'new';
   renderBonuses();
-  accountLayout.querySelector('[data-current-order]').hidden = cancelled;
-  accountLayout.querySelector('[data-no-current-order]').hidden = !cancelled;
-  accountLayout.querySelector('[data-cancelled-order]').hidden = !cancelled;
-  accountLayout.querySelector('[data-order-history-empty]').hidden = cancelled;
+  accountLayout.querySelector('[data-current-order]').hidden = !exampleOrders || cancelled;
+  accountLayout.querySelector('[data-no-current-order]').hidden = exampleOrders && !cancelled;
+  accountLayout.querySelector('[data-cancelled-order]').hidden = !exampleOrders || !cancelled;
+  accountLayout.querySelector('[data-order-history-empty]').hidden = exampleOrders && cancelled;
   for (const panel of accountLayout.querySelectorAll('[data-account-panel]')) {
     panel.hidden = panel.dataset.accountPanel !== view;
   }
@@ -79,8 +80,8 @@ function renderBonuses() {
   panel.querySelector('[data-bonus-empty]').hidden = customer.history.length > 0;
 }
 
-function signIn(remember, identity = 'demo') {
-  window.PolyarikLoyalty.startProfile(identity);
+function signIn(remember, identity = 'new', resetProfile = false) {
+  window.PolyarikLoyalty.startProfile(identity, resetProfile);
   (remember ? localStorage : sessionStorage).setItem(sessionKey, '1');
   if (accountLayout) {
     showAccount();
@@ -158,7 +159,7 @@ if (registration) {
       return;
     }
     registration.reset();
-    signIn(false, 'new');
+    signIn(false, 'new', true);
   });
 }
 
