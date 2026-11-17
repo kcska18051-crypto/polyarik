@@ -179,6 +179,7 @@ function renderProductDetails(detail, product) {
     else row.remove();
   }
   const fixed = document.querySelector('#headerfixed .ajax-head-row');
+  window.PolyarikSizeGuide?.mount(detail, product);
   const availability = product.unavailable ? 'Нет в наличии' : 'В наличии';
   for (const container of [detail, fixed].filter(Boolean)) {
     for (const price of all('.price_value', container)) price.textContent = product.price.toLocaleString('ru-RU');
