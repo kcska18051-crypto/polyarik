@@ -1383,3 +1383,8 @@ body#main :is(.btn, button)::after {
  #header .proto-header-type-two { grid-template-columns: auto minmax(130px,1fr) auto auto; gap: 12px; }
  #header .proto-header-type-two > .header__top-item:nth-child(2) { display: none; }
 }
+
+@media (max-width:991px) {
+ #mobileheader { position: sticky !important; top: 0; z-index: 1000; background: #fff; }
+ html { scroll-padding-top: 96px; }
+}
