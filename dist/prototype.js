@@ -566,13 +566,8 @@ function renderCartLoyalty(pricing) {
   box.setAttribute('aria-label', 'Бонусы и кэшбэк');
   const customer = window.PolyarikLoyalty.profile();
   box.append(savedElement('h3', '', 'Бонусы и кэшбэк'));
-  if (!customer) {
-    box.append(savedElement('p', '', 'Зарегистрируйтесь или войдите, чтобы увидеть доступные скидки и бонусы.'));
-    const login = savedElement('a', '', 'Войти в кабинет');
-    login.href = 'account.html'; login.dataset.accountLink = '';
-    const register = savedElement('a', '', 'Зарегистрироваться'); register.href = 'registration.html';
-    box.append(login, register);
-  } else {
+  if (!customer) return document.createDocumentFragment();
+  {
     box.append(savedElement('p', '', 'Доступно бонусов: ' + money(customer.balance)));
     if (customer.demo) box.append(savedElement('p', 'muted', 'Тестовый баланс демо-профиля.'));
     const form = savedElement('form', 'proto-bonus-form');
@@ -599,7 +594,7 @@ function renderCartLoyalty(pricing) {
 function renderPricingBreakdown(pricing) {
   const box = savedElement('div', 'proto-pricing-breakdown');
   box.append(savedElement('p', 'proto-cart-discount muted', 'Товары до скидок: ' + money(pricing.subtotal)));
-  for (const [rate, label] of [[pricing.volumeRate, 'Скидка за объём'], [pricing.promoRate, 'Промокод'], [pricing.welcomeRate, 'Скидка на первый заказ']]) {
+  for (const [rate, label] of [[pricing.volumeRate, 'Скидка за объём'], [pricing.promoRate, 'Промокод']]) {
     if (rate) box.append(savedElement('p', 'proto-cart-discount muted', label + ' ' + rate + '%: −' + money(discountedCartTotal(pricing.subtotal, rate).discount)));
   }
   if (pricing.bonusSpent) box.append(savedElement('p', 'proto-cart-discount muted', 'Списание бонусов: −' + money(pricing.bonusSpent)));

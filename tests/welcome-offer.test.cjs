@@ -12,3 +12,5 @@ test('first-order 5% is not advertised or applied in cart or checkout',()=>{
 test('returning customer does not receive a misleading first-order offer',()=>{
  const app=setup();app.window.localStorage.setItem('polyarik-demo-account','1');vm.runInContext('renderCart()',app.context);assert.equal(app.savedPage.querySelector('[data-welcome-offer]'),null);
 });
+
+test('guest cart has no bonus registration promotion',()=>{const app=setup();vm.runInContext('renderCart()',app.context);assert.equal(app.savedPage.querySelector('.proto-loyalty'),null);assert.doesNotMatch(app.savedPage.textContent,/Зарегистрируйтесь или войдите|5% на первый заказ/);});

@@ -40,7 +40,7 @@
     }
     const totals = element('div', undefined, 'proto-checkout-receipt-totals');
     totals.append(element('p', 'Товары до скидок: ' + money(order.pricing.subtotal)));
-    for (const [rate, label] of [[order.pricing.welcomeRate, 'Скидка на первый заказ'], [order.pricing.volumeRate, 'Скидка за объём'], [order.pricing.promoRate, 'Промокод']]) {
+    for (const [rate, label] of [[order.pricing.volumeRate, 'Скидка за объём'], [order.pricing.promoRate, 'Промокод']]) {
       if (rate) totals.append(element('p', label + ' ' + rate + '%: −' + money(Math.round(order.pricing.subtotal * rate) / 100)));
     }
     if (order.pricing.bonusSpent) totals.append(element('p', 'Списание бонусов: −' + money(order.pricing.bonusSpent)));
