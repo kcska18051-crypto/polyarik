@@ -1596,3 +1596,12 @@ body#main :is(.btn, button)::after {
 .proto-callback-actions .btn { margin: 0; }
 .proto-callback-status { margin: 16px 0 0; }
 .proto-callback-status:empty { margin: 0; }
+
+@media screen and (min-width: 992px) {
+  #headerfixed { visibility: hidden; }
+  #headerfixed.fixed { visibility: visible; background: #fff; }
+  html { scroll-padding-top: 96px; }
+}
+@media screen and (max-width: 991px) {
+  #headerfixed { display: none !important; }
+}

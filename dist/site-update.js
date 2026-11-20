@@ -3,6 +3,22 @@
   const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
   const money=n=>Number(n||0).toLocaleString('ru-RU')+' ₽';
   const read=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch{return null;}};
+  const header = document.querySelector('#header');
+  const fixedHeader = document.querySelector('#headerfixed');
+  if (header && fixedHeader && typeof matchMedia === 'function') {
+    const desktop = matchMedia('(min-width: 992px)');
+    function updateFixedHeader() {
+      const visible = desktop.matches && header.getBoundingClientRect().bottom <= 0;
+      fixedHeader.classList.toggle('fixed', visible);
+      fixedHeader.inert = !visible;
+    }
+    updateFixedHeader();
+    addEventListener('scroll', updateFixedHeader, { passive: true });
+    addEventListener('resize', updateFixedHeader);
+    addEventListener('pageshow', updateFixedHeader);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(updateFixedHeader).observe(header);
+  }
+
   const callbackTriggers = all('span.callback-block');
   if (callbackTriggers.length) {
     const dialog = el('dialog', undefined, 'proto-callback-dialog');
