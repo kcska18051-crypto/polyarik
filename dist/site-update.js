@@ -34,7 +34,7 @@
       if (switches) input.setAttribute('role', 'switch');
       const copy = el('span', prefix);
       const link = el('a', title);
-      link.href = 'feedback-documents.html#' + section;
+      link.href = 'documents/feedback.html#' + section;
       link.target = '_blank';
       link.rel = 'noopener';
       copy.append(link);
