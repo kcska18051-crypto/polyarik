@@ -31,9 +31,18 @@ relatedDate.dateTime = related.isoDate;
 relatedDate.textContent = related.date;
 
 if (isEvent) {
+  if (entry?.archived) {
+    const status = document.createElement('p');
+    status.className = 'muted';
+    status.textContent = 'Архивная публикация';
+    content.prepend(status);
+    const back = document.querySelector('.bottom-links-block a');
+    back.href = 'events-archive.html';
+    back.textContent = 'Архив публикаций';
+  }
   const list = relatedLink.closest('.side-news__list');
   const sample = relatedLink.closest('.side-news__item');
-  list.replaceChildren(...entries.filter(article => article !== entry).slice(0, 3).map(article => {
+  list.replaceChildren(...entries.filter(article => article !== entry && Boolean(article.archived) === Boolean(entry?.archived)).slice(0, 3).map(article => {
     const row = sample.cloneNode(true);
     const link = row.querySelector('.side-news__item-link');
     link.href = 'event.html?item=' + encodeURIComponent(article.id);
