@@ -32,11 +32,22 @@
         </div>
         <div class="proto-callback-field">
           <label for="callback-phone">Телефон <span aria-hidden="true">*</span></label>
-          <input class="form-control" id="callback-phone" name="phone" type="tel" autocomplete="tel" placeholder="+7 912 345-67-89" maxlength="32" required>
+          <div class="proto-callback-phone">
+            <select name="country" aria-label="Страна телефона">
+              <option value="RU" data-prefix="7" data-length="10" data-example="+7 912 345-67-89">🇷🇺 +7</option>
+              <option value="BY" data-prefix="375" data-length="9" data-example="+375 29 123-45-67">🇧🇾 +375</option>
+              <option value="KZ" data-prefix="7" data-length="10" data-example="+7 701 123-45-67">🇰🇿 +7</option>
+            </select>
+            <input class="form-control" id="callback-phone" name="phone" type="tel" autocomplete="tel" placeholder="+7 912 345-67-89" maxlength="32" required>
+          </div>
         </div>
+        <label class="proto-callback-captcha">
+          <input type="checkbox" name="demoVerification" required>
+          <span><strong>Я не робот</strong><span>Нажмите, чтобы продолжить</span><small>Демонстрационная проверка</small></span>
+        </label>
         <label class="proto-callback-consent">
-          <input type="checkbox" name="consent" required>
-          <span>Я даю согласие на обработку моих персональных данных для обратного звонка. <span aria-hidden="true">*</span></span>
+          <input type="checkbox" name="consent" role="switch" required>
+          <span>Нажимая кнопку «Отправить», я даю согласие на обработку моих персональных данных для обратного звонка.</span>
         </label>
         <div class="proto-callback-actions">
           <button class="btn btn-default" type="submit">Отправить</button>
@@ -48,10 +59,25 @@
     const name = form.elements.namedItem('name');
     const phone = form.elements.namedItem('phone');
     const status = form.querySelector('[role="status"]');
+    const country = form.elements.namedItem('country');
+    function updatePhoneExample() {
+      phone.placeholder = country.selectedOptions[0].dataset.example;
+    }
+    country.addEventListener('change', () => {
+      updatePhoneExample();
+      validate();
+      status.textContent = '';
+    });
+    form.addEventListener('reset', () => queueMicrotask(updatePhoneExample));
     function validate() {
       name.setCustomValidity(name.value.trim() ? '' : 'Укажите ваше имя.');
-      const digits = phone.value.replace(/\D/g, '');
-      const validPhone = /^\+?[\d\s().-]+$/.test(phone.value.trim()) && digits.length >= 10 && digits.length <= 15;
+      const value = phone.value.trim();
+      const digits = value.replace(/\D/g, '');
+      const { prefix, length } = country.selectedOptions[0].dataset;
+      const nationalLength = Number(length);
+      const international = digits.startsWith(prefix) && digits.length === prefix.length + nationalLength;
+      const national = digits.length === nationalLength || (prefix === '7' && /^8\d{10}$/.test(digits));
+      const validPhone = /^\+?[\d\s().-]+$/.test(value) && (international || (!value.startsWith('+') && national));
       phone.setCustomValidity(validPhone ? '' : 'Введите телефон с кодом региона или страны.');
     }
     form.addEventListener('input', () => {

@@ -1605,3 +1605,43 @@ body#main :is(.btn, button)::after {
 @media screen and (max-width: 991px) {
   #headerfixed { display: none !important; }
 }
+
+.proto-callback-dialog { width: min(580px, calc(100% - 24px)); }
+.proto-callback-field input:focus-visible { outline: 2px solid #586a83; outline-offset: -2px; }
+.proto-callback-phone { display: flex; border: 1px solid #e5e5e5; border-radius: 3px; background: #f7f7f7; }
+.proto-callback-phone select { flex: 0 0 auto; padding: 0 8px; border: 0; background: transparent; }
+.proto-callback-phone input.form-control { min-width: 0; border: 0; background: transparent; }
+.proto-callback-captcha {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  margin: 0 0 28px;
+  border: 1px solid #dedede;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.proto-callback-captcha :is(strong, small, span span) { display: block; }
+.proto-callback-captcha small { margin-top: 8px; color: #646464; }
+.proto-callback-captcha input[type="checkbox"],
+.proto-callback-consent input[role="switch"] {
+  display: inline-block;
+  position: static;
+  opacity: 1;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  margin: 2px 0 0;
+}
+.proto-callback-consent input[role="switch"] {
+  appearance: none;
+  width: 34px;
+  border: 1px solid #888;
+  border-radius: 12px;
+  background: radial-gradient(circle at 9px 50%, #686868 6px, transparent 7px) #eee;
+}
+.proto-callback-consent input[role="switch"]:checked {
+  border-color: #3556bb;
+  background: radial-gradient(circle at calc(100% - 9px) 50%, #fff 6px, transparent 7px) #3556bb;
+}
+.proto-callback-actions .btn { background: #3556bb; border-color: #3556bb; color: #fff; }
