@@ -23,7 +23,7 @@
       if(['Контакты','Новости'].includes(title))continue;
       if(title==='О компании'||title==='Условия работы'){
         const details=el('details',undefined,'meeting-menu');details.append(el('summary',title));const links=el('div');
-        const items=title==='О компании'?[['О компании','about.html'],['Контакты','contacts.html'],['Новости','news.html']]:[['Условия работы','buy.html'],['Оплата','payment.html'],['Доставка','delivery.html']];
+        const items=title==='О компании'?[['О компании','about.html'],['Контакты','contacts.html'],['Новости','news.html']]:[['Оплата','payment.html'],['Доставка','delivery.html']];
         for(const [label,url]of items){const a=el('a',label);a.href=url;links.append(a);}details.append(links);nav.append(details);
       }else{const a=el('a',title);a.href=href;nav.append(a);}
     }
