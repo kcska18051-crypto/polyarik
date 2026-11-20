@@ -41,14 +41,28 @@
     }
   }
   function gallery(){
-    const select=document.querySelector('[data-template-gallery-season]');const block=document.querySelector('[data-template-gallery]');if(!block)return;
-    if(select)select.addEventListener('change',()=>all('[data-season]',block).forEach(e=>{e.hidden=select.value!=='all'&&e.dataset.season!==select.value;}));
-    const album=Number(params.get('album'));if(!album||!select)return;
-    if(album<1||album>4){block.replaceChildren(el('p','Альбом не найден.'));return;}
-    select.parentElement.hidden=true;const name=['Весна','Лето','Осень','Зима'][album-1];
-    const main=block.querySelector('.maxwidth-theme');main.replaceChildren();main.append(el('h2',name+' — фотосессия'),el('p','Макет альбома. Здесь будут фотографии образов и видео со съёмки.'));
-    const photo=el('div',undefined,'aspro-album-photo');const image=el('img');image.src='assets/news/placeholder.svg';image.alt='Место для фотографии '+name.toLowerCase();photo.append(image);main.append(photo);
-    const thumbs=el('div',undefined,'aspro-album-thumbs');for(let i=1;i<=4;i++){const b=el('button','Фото '+i,'btn btn-transparent-border-color');b.type='button';b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{image.alt='Место для фотографии '+i;all('button',thumbs).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});thumbs.append(b);}main.append(thumbs,el('h3','Видео со съёмки'),el('p','Видео будет добавлено после получения материалов.'));
+    const block = document.querySelector('[data-gallery-page] [data-template-gallery]');
+    if (!block || !params.has('album')) return;
+    const album = Number(params.get('album'));
+    const season = ['Весна', 'Лето', 'Осень', 'Зима'][album - 1];
+    const title = season ? season + ' — фотосессия' : 'Альбом не найден';
+    document.querySelector('#pagetitle').textContent = title;
+    document.title = title + ' — Полярик';
+    const breadcrumbs = document.querySelector('#navigation .breadcrumbs');
+    const home = breadcrumbs.querySelector('a');
+    const galleryLink = el('a', 'Галерея');
+    galleryLink.href = 'gallery.html';
+    breadcrumbs.replaceChildren(home, ' — ', galleryLink, ' — ', title);
+    const main = block.querySelector('.maxwidth-theme');
+    main.replaceChildren();
+    if (!season) {
+      const back = el('a', 'Все альбомы');
+      back.href = 'gallery.html';
+      main.append(back);
+      return;
+    }
+    const photo=el('div',undefined,'aspro-album-photo');const image=el('img');image.src='assets/news/placeholder.svg';image.alt='Место для фотографии '+season.toLowerCase();photo.append(image);main.append(photo);
+    const thumbs=el('div',undefined,'aspro-album-thumbs');for(let i=1;i<=4;i++){const b=el('button','Фото '+i,'btn btn-transparent-border-color');b.type='button';const preview=el('img');preview.src=image.src;preview.alt='';b.prepend(preview);b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{image.alt='Место для фотографии '+i;all('button',thumbs).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});thumbs.append(b);}main.append(thumbs,el('h3','Видео со съёмки'),el('p','Видео будет добавлено после получения материалов.'));
     const back=el('a','Все альбомы','btn btn-default');back.href='gallery.html';main.append(back);
   }
   const campaign=params.get('campaign');

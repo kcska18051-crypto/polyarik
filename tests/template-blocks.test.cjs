@@ -15,6 +15,12 @@ test('recommendations use actual catalog cards and reveal remaining recommendati
 test('native look changes its title, three linked products and detail route together',async()=>{
  const w=await setup(),d=w.document,look=d.querySelector('[data-template-looks]');assert.equal(look.querySelectorAll('.lookbook__items .block-item').length,3);look.querySelector('[data-look-next]').click();assert.equal(look.querySelector('.lookbook__info-title a').textContent,'Образ №2');assert.ok(look.querySelector('.lookbook__items').textContent.includes('DEMO-A29'));for(const a of look.querySelectorAll('a[href*="looks.html?look="]'))assert.equal(new URL(a.href).searchParams.get('look'),'2');
 });
-test('gallery has four native albums and selected season leaves one visible',async()=>{
- const w=await setup('gallery'),d=w.document;assert.equal(d.querySelectorAll('.gallery-list__item').length,4);const select=d.querySelector('[data-template-gallery-season]');select.value='Зима';select.dispatchEvent(new w.Event('change'));assert.equal([...d.querySelectorAll('[data-album]')].filter(x=>!x.hidden).length,1);
+test('gallery lists four albums without a season filter and uses the album title as the page heading', async () => {
+ const list = (await setup('gallery')).document;
+ assert.equal(list.querySelectorAll('.gallery-list__item').length, 4);
+ assert.equal(list.querySelector('[data-template-gallery-season]'), null);
+ const detail = (await setup('gallery', '?album=4')).document;
+ assert.equal(detail.querySelector('#pagetitle').textContent, 'Зима — фотосессия');
+ assert.equal(detail.querySelectorAll('.aspro-album-thumbs button').length, 4);
+ assert.ok(detail.querySelector('#navigation a[href="gallery.html"]'));
 });
