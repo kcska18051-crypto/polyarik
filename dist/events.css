@@ -36,3 +36,7 @@
 @media(max-width:767px) {
   .event-detail { grid-template-columns:minmax(0,1fr); }
 }
+
+@media (min-width: 992px) {
+  .events-grid.events-archive-only { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
