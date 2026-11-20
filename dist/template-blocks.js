@@ -51,19 +51,9 @@
     const thumbs=el('div',undefined,'aspro-album-thumbs');for(let i=1;i<=4;i++){const b=el('button','Фото '+i,'btn btn-transparent-border-color');b.type='button';b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{image.alt='Место для фотографии '+i;all('button',thumbs).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});thumbs.append(b);}main.append(thumbs,el('h3','Видео со съёмки'),el('p','Видео будет добавлено после получения материалов.'));
     const back=el('a','Все альбомы','btn btn-default');back.href='gallery.html';main.append(back);
   }
-  function publications(entries){
-    const filter=document.querySelector('[data-template-publication-year]');const block=document.querySelector('[data-template-publications]');if(!block)return;
-    if(filter)filter.addEventListener('change',()=>all('[data-year]',block).forEach(e=>{e.hidden=filter.value!=='all'&&filter.value!==e.dataset.year;}));
-    if(!filter||!params.has('article'))return;
-    filter.parentElement.hidden=true;const entry=entries.find(e=>e.id===params.get('article'));const main=block.querySelector('.maxwidth-theme');main.replaceChildren();
-    if(!entry){main.append(el('h2','Публикация не найдена'));return;}
-    const article=el('article',undefined,'aspro-article-detail');const image=el('img');image.src='assets/news/placeholder.svg';image.alt='Иллюстрация публикации';const text=el('div');const date=el('time',entry.date.split('-').reverse().join('.'));date.dateTime=entry.date;
-    const back=el('a','Все публикации','btn btn-transparent-border-color');back.href='publications.html';text.append(date,el('h2',entry.title),el('p',entry.body),el('small','Материал прототипа'),back);article.append(image,text);main.append(article);
-  }
   const campaign=params.get('campaign');
   if(campaign&&location.pathname.endsWith('/offers.html')){const name=['Промокоды','Подарки и бонусы','Доставка в подарок'][Number(campaign)-1];const main=document.querySelector('main');main.replaceChildren(el('h2',name||'Акция не найдена'),el('p','Макет страницы акции. Условия, сроки и материалы будут опубликованы после согласования.'));const back=el('a','Все акции','btn btn-default');back.href='offers.html';main.append(back);}
   gallery();
   const needProducts=document.querySelector('[data-template-recommendations],[data-template-looks]');
   if(needProducts)fetch('products.json?v=5').then(r=>r.json()).then(products=>{recommendations(products);looks(products);}).catch(()=>{needProducts.replaceChildren(el('p','Не удалось загрузить товары. Обновите страницу.'));});
-  if(document.querySelector('[data-template-publications]'))fetch('publications.json').then(r=>r.json()).then(publications);
 })();

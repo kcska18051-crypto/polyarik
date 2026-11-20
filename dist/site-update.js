@@ -19,11 +19,11 @@
   const menu=document.querySelector('#mobilemenu');
   if(menu&&!menu.querySelector('.meeting-mobile-nav')){
     const nav=el('nav',undefined,'meeting-mobile-nav');nav.setAttribute('aria-label','Основные разделы');
-    for(const [title,href]of [['Каталог','catalog.html'],['Акции','offers.html'],['Спецпредложения','specials.html'],['Оптовикам','wholesale.html'],['Условия работы','buy.html'],['Производство','services.html'],['О компании','about.html'],['Контакты','contacts.html'],['Новости','news.html'],['Актуальная информация','publications.html'],['Галерея','gallery.html']]){
-      if(['Контакты','Новости','Актуальная информация'].includes(title))continue;
+    for(const [title,href]of [['Каталог','catalog.html'],['Акции','offers.html'],['Спецпредложения','specials.html'],['Оптовикам','wholesale.html'],['Условия работы','buy.html'],['Производство','services.html'],['О компании','about.html'],['Контакты','contacts.html'],['Новости','news.html'],['Галерея','gallery.html']]){
+      if(['Контакты','Новости'].includes(title))continue;
       if(title==='О компании'||title==='Условия работы'){
         const details=el('details',undefined,'meeting-menu');details.append(el('summary',title));const links=el('div');
-        const items=title==='О компании'?[['О компании','about.html'],['Контакты','contacts.html'],['Новости','news.html'],['Актуальная информация','publications.html']]:[['Условия работы','buy.html'],['Оплата','payment.html'],['Доставка','delivery.html']];
+        const items=title==='О компании'?[['О компании','about.html'],['Контакты','contacts.html'],['Новости','news.html']]:[['Условия работы','buy.html'],['Оплата','payment.html'],['Доставка','delivery.html']];
         for(const [label,url]of items){const a=el('a',label);a.href=url;links.append(a);}details.append(links);nav.append(details);
       }else{const a=el('a',title);a.href=href;nav.append(a);}
     }
