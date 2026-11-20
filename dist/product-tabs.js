@@ -28,6 +28,7 @@
     const submit=element('button','Сохранить демо-отзыв','btn btn-default');submit.type='submit';
     const cancel=element('button','Отмена','btn btn-transparent-border-color');cancel.type='button';
     const actions=element('div',undefined,'proto-review-actions');actions.append(submit,cancel);form.append(note,actions);
+    window.PolyarikFeedbackConsents?.(form, actions);
     const status=element('p');status.dataset.reviewStatus='';status.setAttribute('role','status');
     function showForm(visible){form.hidden=!visible;open.setAttribute('aria-expanded',String(visible));if(visible)author.focus();else open.focus();}
     function render(){

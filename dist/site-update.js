@@ -19,6 +19,37 @@
     if (typeof ResizeObserver === 'function') new ResizeObserver(updateFixedHeader).observe(header);
   }
 
+  function addFeedbackConsents(form, before, switches = false) {
+    const group = el('div', undefined, 'proto-feedback-consents');
+    const documents = [
+      ['consent', 'Даю ', 'согласие на обработку персональных данных', 'personal-data'],
+      ['agreement', 'Принимаю ', 'пользовательское соглашение', 'user-agreement'],
+    ];
+    for (const [name, prefix, title, section] of documents) {
+      const label = el('label', undefined, switches ? 'proto-callback-consent' : undefined);
+      const input = el('input');
+      input.type = 'checkbox';
+      input.name = name;
+      input.required = true;
+      if (switches) input.setAttribute('role', 'switch');
+      const copy = el('span', prefix);
+      const link = el('a', title);
+      link.href = 'feedback-documents.html#' + section;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      copy.append(link);
+      label.append(input, copy);
+      group.append(label);
+    }
+    before.before(group);
+  }
+
+  window.PolyarikFeedbackConsents = addFeedbackConsents;
+  for (const form of all('form.promo-form, form.proto-footer-subscribe-form')) {
+    const submit = form.querySelector('[type="submit"]');
+    if (submit) addFeedbackConsents(form, submit);
+  }
+
   const callbackTriggers = all('span.callback-block');
   if (callbackTriggers.length) {
     const dialog = el('dialog', undefined, 'proto-callback-dialog');
@@ -45,14 +76,6 @@
           <input type="checkbox" name="demoVerification" required>
           <span><strong>Я не робот</strong><span>Нажмите, чтобы продолжить</span><small>Демонстрационная проверка</small></span>
         </label>
-        <label class="proto-callback-consent">
-          <input type="checkbox" name="consent" role="switch" required>
-          <span>Даю согласие на обработку персональных данных</span>
-        </label>
-        <label class="proto-callback-consent">
-          <input type="checkbox" name="agreement" role="switch" required>
-          <span>Принимаю пользовательское соглашение</span>
-        </label>
         <div class="proto-callback-actions">
           <button class="btn btn-default" type="submit">Отправить</button>
           <span>* — обязательные поля</span>
@@ -60,6 +83,7 @@
         <p role="status" class="proto-callback-status"></p>
       </form>`;
     const form = dialog.querySelector('form');
+    addFeedbackConsents(form, form.querySelector('.proto-callback-actions'), true);
     const name = form.elements.namedItem('name');
     const phone = form.elements.namedItem('phone');
     const status = form.querySelector('[role="status"]');

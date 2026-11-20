@@ -1650,3 +1650,11 @@ body#main :is(.btn, button)::after {
   background: radial-gradient(circle at calc(100% - 9px) 50%, #fff 6px, transparent 7px) #3556bb;
 }
 .proto-callback-actions .btn { background: #3556bb; border-color: #3556bb; color: #fff; }
+
+.proto-feedback-consents { display: grid; gap: 10px; margin: 16px 0; }
+.proto-feedback-consents label { display: flex; align-items: flex-start; gap: 10px; margin: 0; }
+.proto-feedback-consents label input[type="checkbox"] { flex: 0 0 auto; margin: 3px 0 0; }
+.proto-feedback-consents a { text-decoration: underline; }
+.proto-footer-subscribe-form { flex-wrap: wrap; }
+.proto-footer-subscribe-form .proto-feedback-consents { flex-basis: 100%; order: 1; }
+.proto-footer-subscribe-form .proto-feedback-consents input { padding: 0; }
