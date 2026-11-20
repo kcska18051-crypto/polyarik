@@ -47,7 +47,11 @@
         </label>
         <label class="proto-callback-consent">
           <input type="checkbox" name="consent" role="switch" required>
-          <span>Нажимая кнопку «Отправить», я даю согласие на обработку моих персональных данных для обратного звонка.</span>
+          <span>Даю согласие на обработку персональных данных</span>
+        </label>
+        <label class="proto-callback-consent">
+          <input type="checkbox" name="agreement" role="switch" required>
+          <span>Принимаю пользовательское соглашение</span>
         </label>
         <div class="proto-callback-actions">
           <button class="btn btn-default" type="submit">Отправить</button>
