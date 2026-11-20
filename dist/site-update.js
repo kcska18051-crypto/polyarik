@@ -3,6 +3,38 @@
   const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
   const money=n=>Number(n||0).toLocaleString('ru-RU')+' ₽';
   const read=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch{return null;}};
+  const callbackTriggers = all('span.callback-block');
+  if (callbackTriggers.length) {
+    const dialog = el('dialog');
+    dialog.setAttribute('aria-labelledby', 'callback-heading');
+    dialog.style.cssText = 'width:min(420px,calc(100% - 32px));padding:24px;border:1px solid #ddd';
+    dialog.innerHTML = `<form>
+      <h2 id="callback-heading">Заказать звонок</h2>
+      <p><label for="callback-phone">Телефон *</label><input class="form-control" id="callback-phone" type="tel" autocomplete="tel" required></p>
+      <p role="status"></p>
+      <button class="btn btn-default" type="submit">Отправить</button>
+      <button class="btn btn-transparent-border-color" type="button" data-close-callback>Закрыть</button>
+    </form>`;
+    const form = dialog.querySelector('form');
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      form.querySelector('[role="status"]').textContent = 'В прототипе заявка не отправляется.';
+    });
+    dialog.querySelector('[data-close-callback]').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+      form.reset();
+      form.querySelector('[role="status"]').textContent = '';
+    });
+    document.body.append(dialog);
+    for (const trigger of callbackTriggers) {
+      const button = el('button', trigger.textContent, trigger.className);
+      button.type = 'button';
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.style.cssText = 'border:0;background:none;padding:0;text-align:inherit';
+      button.addEventListener('click', () => dialog.showModal());
+      trigger.replaceWith(button);
+    }
+  }
   // Header balance reflects the existing account, with no new bonus grants.
   function balance(){
     const customer=window.PolyarikLoyalty?.profile();
