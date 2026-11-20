@@ -1450,3 +1450,11 @@ body#main :is(.btn, button)::after {
 #header .proto-header-type-two .right-icons > .line-block { margin:0!important; }
 
 .meeting-mobile-nav .meeting-menu > div { position:static; box-shadow:none; min-width:0; margin-top:8px; }
+
+/* Keep header actions together and align the top row with the main menu. */
+#header .proto-header-type-two { margin-inline:0!important; width:100%; }
+#header .proto-header-type-two .right-icons > .line-block { gap:10px; }
+#header .proto-header-type-two .right-icons > .line-block > .line-block__item { padding-inline:0!important; margin:0!important; }
+@media(min-width:992px) and (max-width:1199px){
+ #header .proto-header-type-two .right-icons > .line-block { gap:8px; }
+}
