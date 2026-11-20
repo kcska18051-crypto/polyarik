@@ -101,10 +101,20 @@
         const layout = el('div', undefined, 'look-detail');
         const picture = card.querySelector('.lookbook__picture');
         const copy = el('div', undefined, 'look-detail-copy');
-        copy.append(el('p', 'Демонстрационный образ. Фото на модели будет добавлено после согласования.'));
-        copy.append(el('h2', 'Товары в образе'), card.querySelector('.lookbook__items'), back);
+        const items = card.querySelector('.lookbook__items');
+        const productsSection = el('section', undefined, 'look-detail-products');
+        const productHeading = el('h2', 'Товары в образе');
+        productHeading.id = 'look-products-title';
+        productsSection.setAttribute('aria-labelledby', productHeading.id);
+        productsSection.append(productHeading, items);
+        const viewProducts = el('a', 'Посмотреть товары', 'btn btn-default');
+        viewProducts.href = '#' + productHeading.id;
+        copy.append(el('p', 'Детские головные уборы и аксессуары', 'looks-list-category'));
+        copy.append(el('h2', 'Об образе'));
+        copy.append(el('p', 'Подборка детских аксессуаров для оптового заказа. Товары можно заказать упаковками.'));
+        copy.append(viewProducts);
         layout.append(picture, copy);
-        block.replaceWith(layout);
+        block.replaceWith(layout, productsSection, back);
         continue;
       }
       block.querySelector('[data-look-prev]').addEventListener('click', () => {

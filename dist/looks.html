@@ -257,18 +257,24 @@
 .looks-list-copy { padding-top:16px; }
 .looks-list-card h2 { font-size:17px; line-height:1.4; font-weight:400; margin:10px 0 0; }
 .looks-list-category { margin:0; color:#666; text-transform:uppercase; letter-spacing:.04em; font-size:11px; line-height:1.4; }
-.look-detail { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:clamp(20px,4vw,56px); align-items:start; }
-.look-detail > img { width:100%; aspect-ratio:4/3; object-fit:cover; }
-.look-detail .block-item { padding:12px; margin-bottom:10px; }
+.look-detail { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(20px,4vw,56px); align-items:center; margin-bottom:40px; }
+.look-detail > img { width:100%; max-height:520px; aspect-ratio:4/3; object-fit:contain; background:#eee; }
 .look-detail-copy { min-width:0; }
-.look-detail .block-item__info { min-width:0; overflow-wrap:anywhere; }
-.look-detail-copy > a { margin-top:16px; }
+.look-detail-copy h2,.look-detail-products h2 { font-size:24px; margin:12px 0 20px; }
+.look-detail-copy .btn { margin-top:18px; }
+.look-detail-products { margin-bottom:32px; }
+.look-detail-products h2 { scroll-margin-top:110px; }
+.look-detail-products .block-items { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.look-detail-products .block-item { padding:16px; min-width:0; }
+.look-detail-products .block-item__info { min-width:0; overflow-wrap:anywhere; }
+.look-detail-products .block-item__image { flex:0 0 64px; }
+.look-detail-products small { display:block; margin-bottom:8px; }
 @media(max-width:767px) {
  .looks-filters a { font-size:14px; padding:14px 20px; }
  .looks-list-card h2 { font-size:15px; }
  .looks-list-category { font-size:10px; }
  .looks-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
- .look-detail { grid-template-columns:minmax(0,1fr); }
+ .look-detail,.look-detail-products .block-items { grid-template-columns:minmax(0,1fr); }
 }
 </style>
 </head>
@@ -1353,4 +1359,4 @@
                         </div>
                     </div>
                 </div></template>
-<script src="template-blocks.js?v=71"></script></body></html>
+<script src="template-blocks.js?v=72"></script></body></html>
