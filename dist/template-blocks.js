@@ -33,13 +33,17 @@
       const requested = Number(params.get('look'));
       if (page && !detail) {
         const grid = el('div', undefined, 'looks-list');
-        looks.forEach((_, index) => {
+        looks.forEach((productIds, index) => {
           const link = el('a', undefined, 'looks-list-card');
           link.href = 'looks.html?look=' + (index + 1);
           const image = el('img');
           image.src = 'assets/news/placeholder.svg';
           image.alt = '';
-          link.append(image, el('h2', 'Образ №' + (index + 1)));
+          const copy = el('div', undefined, 'looks-list-copy');
+          const names = productIds.map(id => products.find(product => product.id === id)?.name).filter(Boolean);
+          copy.append(el('h2', 'Образ №' + (index + 1)));
+          copy.append(el('p', names.join(' · ')));
+          link.append(image, copy);
           grid.append(link);
         });
         block.replaceWith(grid);
