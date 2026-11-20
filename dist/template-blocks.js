@@ -25,6 +25,7 @@
       grid.children[initialCount]?.querySelector('.item-title a')?.focus();
     }, {once: true});
   }
+  const lookTitles = ['На каждый день', 'Тёплая прогулка', 'Лёгкий комплект', 'Для прохладной погоды', 'Шапка и аксессуары'];
   function looks(products){
     for(const block of all('[data-template-looks]')){
       const looks=[['DEMO-A5','DEMO-A4','DEMO-A3'],['DEMO-A29','DEMO-A4','DEMO-A7'],['DEMO-A13','DEMO-A4','DEMO-A3'],['DEMO-A5','DEMO-A8','DEMO-A25'],['DEMO-A29','DEMO-A4','DEMO-A34']];
@@ -33,20 +34,27 @@
       const requested = Number(params.get('look'));
       if (page && !detail) {
         const grid = el('div', undefined, 'looks-list');
-        looks.forEach((productIds, index) => {
+        looks.forEach((_, index) => {
           const link = el('a', undefined, 'looks-list-card');
           link.href = 'looks.html?look=' + (index + 1);
           const image = el('img');
           image.src = 'assets/news/placeholder.svg';
           image.alt = '';
           const copy = el('div', undefined, 'looks-list-copy');
-          const names = productIds.map(id => products.find(product => product.id === id)?.name).filter(Boolean);
-          copy.append(el('h2', 'Образ №' + (index + 1)));
-          copy.append(el('p', names.join(' · ')));
+          copy.append(el('p', 'Дети', 'looks-list-category'), el('h2', lookTitles[index]));
           link.append(image, copy);
           grid.append(link);
         });
-        block.replaceWith(grid);
+        const filters = el('nav', undefined, 'looks-filters');
+        filters.setAttribute('aria-label', 'Категории образов');
+        const activeCategory = params.get('category') === 'kids' ? 'kids' : 'all';
+        for (const [key, label] of [['all', 'Все'], ['kids', 'Дети']]) {
+          const link = el('a', label);
+          link.href = key === 'all' ? 'looks.html' : 'looks.html?category=kids';
+          if (key === activeCategory) link.setAttribute('aria-current', 'page');
+          filters.append(link);
+        }
+        block.replaceWith(filters, grid);
         continue;
       }
       if (detail && (!Number.isInteger(requested) || requested < 1 || requested > looks.length)) {
@@ -60,7 +68,7 @@
       const sample=document.querySelector('#aspro-simple-product').content.firstElementChild;
       const render=()=>{
         const card=block.querySelector('[data-look-card]');
-        const link=card.querySelector('.lookbook__info-title a');link.textContent='Образ №'+(index+1);link.href='looks.html?look='+(index+1);
+        const link=card.querySelector('.lookbook__info-title a');link.textContent=page ? lookTitles[index] : 'Образ №'+(index+1);link.href='looks.html?look='+(index+1);
         for(const a of all('a',block)){const url=new URL(a.href);if(url.pathname.endsWith('/looks.html')&&url.searchParams.has('look'))a.href=link.href;}
         const items=card.querySelector('.lookbook__items');items.replaceChildren();
         const list=el('div',undefined,'content_wrapper_block catalog_list_simple');const rows=el('div',undefined,'block-items');list.append(rows);
@@ -80,7 +88,7 @@
       };
       render();
       if (detail) {
-        const title = 'Образ №' + (index + 1);
+        const title = lookTitles[index];
         document.querySelector('#pagetitle').textContent = title;
         document.title = title + ' — Полярик';
         const crumbs = document.querySelector('#navigation .breadcrumbs');

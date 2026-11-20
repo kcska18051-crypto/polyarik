@@ -247,12 +247,16 @@
 <link rel="stylesheet" href="account.css?v=3">
 <script defer="" src="account.js?v=60"></script>
 <style>
-.looks-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
-.looks-list-card { display:block; border:1px solid #ddd; }
-.looks-list-card img { display:block; width:100%; aspect-ratio:4/3; object-fit:cover; }
-.looks-list-copy { padding:16px; }
-.looks-list-card h2 { font-size:20px; margin:0 0 8px; }
-.looks-list-copy p { margin:0; line-height:1.5; color:#555; overflow-wrap:anywhere; }
+.looks-filters { display:flex; border:1px solid #eee; margin:0 0 30px; }
+.looks-filters a { padding:16px 26px; border-right:1px solid #eee; text-transform:uppercase; font-size:13px; }
+.looks-filters a[aria-current] { background:#f6f6f6; }
+.looks-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid #eee; border-left:1px solid #eee; }
+.looks-list-card { display:block; min-width:0; padding:clamp(12px,2.2vw,32px); border-right:1px solid #eee; border-bottom:1px solid #eee; text-align:center; }
+.looks-list-card:hover,.looks-list-card:focus-visible { position:relative; box-shadow:0 8px 25px #0001; }
+.looks-list-card img { display:block; width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:3px; }
+.looks-list-copy { padding-top:16px; }
+.looks-list-card h2 { font-size:clamp(15px,1.4vw,20px); margin:8px 0 0; }
+.looks-list-category { margin:0; color:#666; text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
 .look-detail { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:clamp(20px,4vw,56px); align-items:start; }
 .look-detail > img { width:100%; aspect-ratio:4/3; object-fit:cover; }
 .look-detail .block-item { padding:12px; margin-bottom:10px; }
@@ -260,7 +264,7 @@
 .look-detail .block-item__info { min-width:0; overflow-wrap:anywhere; }
 .look-detail-copy > a { margin-top:16px; }
 @media(max-width:767px) {
- .looks-list { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+ .looks-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
  .look-detail { grid-template-columns:minmax(0,1fr); }
 }
 </style>
@@ -1346,4 +1350,4 @@
                         </div>
                     </div>
                 </div></template>
-<script src="template-blocks.js?v=70"></script></body></html>
+<script src="template-blocks.js?v=71"></script></body></html>
