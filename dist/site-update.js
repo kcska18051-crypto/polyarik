@@ -44,23 +44,6 @@
     const save=el('button','Сохранить','btn btn-default');save.type='submit';const status=el('p');status.setAttribute('role','status');form.append(save,status,el('p','Предпочтения сохраняются в этой вкладке и подставляются в новое оформление заказа.','muted'));
     form.addEventListener('submit',e=>{e.preventDefault();other.setCustomValidity(other.disabled||other.value.trim()?'':'Укажите название компании.');if(!form.reportValidity())return;try{sessionStorage.setItem('polyarik-delivery-preferences',JSON.stringify({carrier:carrier.value,carrierOther:other.disabled?'':other.value.trim(),tariff:tariff.value.trim()}));status.textContent='Предпочтения сохранены.';}catch{status.textContent='Не удалось сохранить предпочтения.';}});other.addEventListener('input',()=>other.setCustomValidity(''));profile.append(form);
   }
-  const home=document.querySelector('[data-home-recommendations]');
-  const looks=document.querySelector('[data-looks]');
-  if(home||looks)fetch('products.json?v=5').then(r=>r.json()).then(products=>{
-    function card(p){const a=el('a',undefined,'proto-related-card');a.href='product.html?'+new URLSearchParams({sku:p.id});const image=el('img');image.src=p.photos[0];image.alt=p.name;a.append(image,el('strong',p.name),el('span','Арт. '+p.id),el('span',money(p.price*p.n)+' / упак. · '+p.n+' шт.'));return a;}
-    if(home)home.replaceChildren(...products.filter(p=>p.promoOffers?.includes('recommendations')).slice(0,15).map(card));
-    if(looks){const title=el('h2','Пример образа');const note=el('p','Макет комплектации: фото на модели и сочетание артикулов согласуются отдельно.');const grid=el('div',undefined,'proto-product-grid');const ids=['DEMO-A2','DEMO-A4','DEMO-A3'];grid.append(...products.filter(p=>ids.includes(p.id)).map(card));looks.replaceChildren(title,note,grid);}
-  }).catch(()=>{(home||looks).textContent='Не удалось загрузить товары. Обновите страницу.';});
-  // Gallery intentionally awaits client media instead of displaying template photos as real work.
-  const gallery=document.querySelector('[data-gallery-results]');
-  if(gallery){const update=()=>{const season=document.querySelector('[data-gallery-season]').value,type=document.querySelector('[data-gallery-type]').value;gallery.replaceChildren(el('p',(type==='video'?'Видео':type==='photo'?'Фотографии':'Фото и видео')+(season==='all'?'':' · '+season)+': материалы пока не добавлены.'));};all('[data-gallery-season],[data-gallery-type]').forEach(e=>e.addEventListener('change',update));update();}
-  const publications=document.querySelector('[data-publications]');
-  if(publications){
-    const entries=[{id:'ordering',date:'2026-11-20',title:'Как подготовить оптовый заказ',body:'Заказ оформляется упаковками. Минимальная сумма товаров до скидок — 5 000 ₽. Укажите реквизиты и контактные данные; менеджер согласует состав заказа и выставит счёт.'},{id:'shipping',date:'2026-11-19',title:'Что указать для доставки транспортной компанией',body:'Выберите перевозчика, укажите город и при необходимости терминал. Желаемый тариф можно вписать в свободной форме. Стоимость и сроки согласуются с менеджером.'}];
-    const selected=new URLSearchParams(location.search).get('article');
-    const year=document.querySelector('[data-publication-year]');
-    const update=()=>{publications.replaceChildren();for(const item of entries.filter(x=>(year.value==='all'||x.date.startsWith(year.value))&&(!selected||x.id===selected))){const article=el('article',undefined,'meeting-tile');const date=el('time',item.date.split('-').reverse().join('.'));date.dateTime=item.date;const a=el('a',item.title);a.href='publications.html?article='+item.id;article.append(date,el('small',' Материал прототипа'),a,el('p',item.body));publications.append(article);}if(!publications.children.length)publications.append(el('p','За выбранный год публикаций нет.'));if(selected){const back=el('a','Все публикации');back.href='publications.html';publications.append(back);}};year.addEventListener('change',update);update();
-  }
   const moderation=document.querySelector('[data-moderation]');
   if(moderation){
     function render(){moderation.replaceChildren();let count=0;

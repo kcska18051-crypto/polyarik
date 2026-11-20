@@ -337,6 +337,8 @@ function catalogCard(sample, product, index) {
   return row;
 }
 
+window.PolyarikCatalogUI = {card: catalogCard};
+
 const catalogSorts = {
   popular: () => 0,
   'popular-desc': (a, b) => b.index - a.index,

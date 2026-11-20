@@ -8,7 +8,7 @@ test('shared desktop navigation has eight agreed sections and no comparison link
  for(const file of fs.readdirSync(root).filter(f=>f.endsWith('.html'))){const d=doc(file.replace('.html','')).window.document;const nav=d.querySelector('#header .menu-row .table-menu > table > tbody > tr');assert.equal(nav.children.length,8,file);assert.equal(d.querySelector('a[href="compare.html"]'),null,file);assert.ok(nav.textContent.includes('Спецпредложения'));assert.ok(nav.textContent.includes('Галерея'));assert.equal(d.querySelector('.proto-header-search input').placeholder,'Поиск по каталогу');assert.ok(d.querySelector('#header a[href="tel:+79250645525"]'));}
 });
 test('specials are four separate selections and hats contain helmets and knit hats',()=>{
- const d=doc('specials').window.document;assert.deepEqual([...d.querySelectorAll('.meeting-content .meeting-tile')].map(a=>new URL(a.href).searchParams.get('offer')),['new','50','100','150']);
+ const d=doc('specials').window.document;assert.deepEqual([...d.querySelectorAll('.polyarik-offers-list a')].map(a=>new URL(a.href).searchParams.get('offer')),['new','50','100','150']);
  const tree=JSON.parse(fs.readFileSync(root+'catalog-tree.json'));const hats=tree[0].children.find(n=>n.name==='Шапки');assert.ok(hats.children.some(n=>n.slug==='shlemy'));assert.ok(hats.children.some(n=>n.slug==='shapki_trikotazhnye'));const summer=tree[0].children.find(n=>n.name==='Летние головные уборы');assert.equal(summer.children.some(n=>n.slug==='shlemy'),false);
 });
 test('profile delivery preference validates custom carrier and keeps optional tariff',()=>{
