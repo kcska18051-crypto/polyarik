@@ -28,7 +28,31 @@
   function looks(products){
     for(const block of all('[data-template-looks]')){
       const looks=[['DEMO-A5','DEMO-A4','DEMO-A3'],['DEMO-A29','DEMO-A4','DEMO-A7'],['DEMO-A13','DEMO-A4','DEMO-A3'],['DEMO-A5','DEMO-A8','DEMO-A25'],['DEMO-A29','DEMO-A4','DEMO-A34']];
-      let index=Math.max(0,Math.min(4,(Number(params.get('look'))||1)-1));
+      const page = block.closest('[data-looks-page]');
+      const detail = page && params.has('look');
+      const requested = Number(params.get('look'));
+      if (page && !detail) {
+        const grid = el('div', undefined, 'looks-list');
+        looks.forEach((_, index) => {
+          const link = el('a', undefined, 'looks-list-card');
+          link.href = 'looks.html?look=' + (index + 1);
+          const image = el('img');
+          image.src = 'assets/news/placeholder.svg';
+          image.alt = '';
+          link.append(image, el('h2', 'Образ №' + (index + 1)));
+          grid.append(link);
+        });
+        block.replaceWith(grid);
+        continue;
+      }
+      if (detail && (!Number.isInteger(requested) || requested < 1 || requested > looks.length)) {
+        document.querySelector('#pagetitle').textContent = 'Образ не найден';
+        const back = el('a', 'Все образы');
+        back.href = 'looks.html';
+        block.replaceWith(back);
+        continue;
+      }
+      let index = detail ? requested - 1 : 0;
       const sample=document.querySelector('#aspro-simple-product').content.firstElementChild;
       const render=()=>{
         const card=block.querySelector('[data-look-card]');
@@ -50,7 +74,36 @@
         items.append(list);
         block.querySelector('[data-look-position]').textContent=(index+1)+' / '+looks.length;
       };
-      block.querySelector('[data-look-prev]').addEventListener('click',()=>{index=(index+4)%5;render();});block.querySelector('[data-look-next]').addEventListener('click',()=>{index=(index+1)%5;render();});render();
+      render();
+      if (detail) {
+        const title = 'Образ №' + (index + 1);
+        document.querySelector('#pagetitle').textContent = title;
+        document.title = title + ' — Полярик';
+        const crumbs = document.querySelector('#navigation .breadcrumbs');
+        const back = el('a', 'Все образы', 'btn btn-transparent-border-color');
+        back.href = 'looks.html';
+        const collection = el('a', 'Образы');
+        collection.href = back.href;
+        crumbs.replaceChildren(crumbs.querySelector('a'), ' — ', collection, ' — ', title);
+        const card = block.querySelector('[data-look-card]');
+        const layout = el('div', undefined, 'look-detail');
+        const picture = card.querySelector('.lookbook__picture');
+        const copy = el('div', undefined, 'look-detail-copy');
+        copy.append(el('p', 'Демонстрационный образ. Фото на модели будет добавлено после согласования.'));
+        copy.append(el('h2', 'Товары в образе'), card.querySelector('.lookbook__items'), back);
+        layout.append(picture, copy);
+        block.replaceWith(layout);
+        continue;
+      }
+      block.querySelector('[data-look-prev]').addEventListener('click', () => {
+        index = (index + looks.length - 1) % looks.length;
+        render();
+      });
+      block.querySelector('[data-look-next]').addEventListener('click', () => {
+        index = (index + 1) % looks.length;
+        render();
+      });
+
     }
   }
   function gallery(){
