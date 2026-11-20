@@ -1,7 +1,8 @@
 const entries = JSON.parse(document.querySelector('#news-entries').textContent);
 const item = new URLSearchParams(location.search).get('item');
 const entry = item === null ? entries[0] : entries.find(article => article.id === item);
-const title = entry?.title ?? 'Новость не найдена';
+const isEvent = document.body.hasAttribute('data-event-detail');
+const title = entry?.title ?? (isEvent ? 'Статья не найдена' : 'Новость не найдена');
 const date = document.querySelector('.detail-date');
 const content = document.querySelector('.detail_content_wrapper');
 
@@ -23,7 +24,7 @@ if (entry) {
 
 const related = entries.find(article => article !== entry);
 const relatedLink = document.querySelector('.side-news__item-link');
-relatedLink.href = 'news-detail.html?item=' + related.id;
+relatedLink.href = (isEvent ? 'event.html' : 'news-detail.html') + '?item=' + encodeURIComponent(related.id);
 relatedLink.textContent = related.title;
 const relatedDate = document.querySelector('.side-news__item-date');
 relatedDate.dateTime = related.isoDate;
