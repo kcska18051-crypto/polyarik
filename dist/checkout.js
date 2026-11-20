@@ -21,7 +21,12 @@
   }
   function showConfirmation(dialog, order) {
     dialog.querySelector('h2').textContent = 'Заказ ' + order.number + ' сформирован';
-    if (dialog.hasAttribute('data-checkout-page')) document.querySelector('#pagetitle').textContent = 'Заказ ' + order.number + ' сформирован';
+    if (dialog.hasAttribute('data-checkout-page')) {
+      const title = dialog.querySelector('h2').textContent;
+      document.querySelector('#pagetitle').textContent = title;
+      document.querySelector('.breadcrumbs [aria-current="page"]').textContent = title;
+      document.title = title + ' — Полярик';
+    }
     const summary = dialog.querySelector('[data-checkout-summary]') || element('p'); summary.dataset.checkoutSummary = '';
     summary.textContent = 'Товары к оплате: ' + money(order.pricing.total);
     const box = content(dialog);

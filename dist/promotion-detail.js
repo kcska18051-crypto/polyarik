@@ -5,6 +5,7 @@ const title = offer?.title ?? 'Предложение не найдено';
 
 document.title = title + ' — Полярик';
 document.querySelector('#pagetitle').textContent = title;
+document.querySelector('#navigation [aria-current="page"]').textContent = title;
 
 if (offer) {
   document.querySelector('.promo-lead').textContent = offer.lead;

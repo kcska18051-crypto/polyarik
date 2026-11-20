@@ -32,6 +32,16 @@ relatedDate.textContent = related.date;
 
 if (isEvent) {
   if (entry?.archived) {
+    const current = document.querySelector('#navigation .breadcrumbs__item[aria-current="page"]');
+    const archive = document.createElement('a');
+    archive.className = 'breadcrumbs__link font_xs';
+    archive.href = 'events-archive.html';
+    archive.textContent = 'Архив публикаций';
+    const separator = document.createElement('span');
+    separator.className = 'breadcrumbs__separator';
+    separator.setAttribute('aria-hidden', 'true');
+    separator.textContent = '—';
+    current.before(archive, separator);
     const status = document.createElement('p');
     status.className = 'muted';
     status.textContent = 'Архивная публикация';

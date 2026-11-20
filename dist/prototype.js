@@ -374,7 +374,10 @@ function renderCatalog(tree) {
     link.href = 'category.html?' + new URLSearchParams({section: parent.slug, title: parent.name});
     link.textContent = parent.name;
   } else {
+    parentCrumb?.previousElementSibling?.remove();
     parentCrumb?.remove();
+    const position = crumbs.at(-1)?.querySelector('meta[itemprop="position"]');
+    if (position) position.content = '3';
   }
   const currentCrumb = crumbs.at(-1)?.querySelector('.breadcrumbs__item-name');
   if (currentCrumb) currentCrumb.textContent = heading;
@@ -906,8 +909,26 @@ function renderOffer() {
   }
   const container = document.querySelector('.catalog_section_list');
   if (!container) return;
-  document.querySelector('h1').textContent = offerNames[offer];
-  document.title = offerNames[offer] + ' — Полярик';
+  const title = offerNames[offer];
+  document.querySelector('#pagetitle').textContent = title;
+  document.title = title + ' — Полярик';
+  const current = document.querySelector('#navigation .breadcrumbs > .breadcrumbs__item:last-child');
+  const recommendations = offer === 'recommendations';
+  const parent = current.cloneNode(true);
+  const link = savedElement('a', 'breadcrumbs__link font_xs');
+  link.href = recommendations ? 'catalog.html' : 'specials.html';
+  link.setAttribute('itemprop', 'item');
+  const parentName = parent.querySelector('.breadcrumbs__item-name');
+  parentName.textContent = recommendations ? 'Каталог' : 'Спецпредложения';
+  link.append(parentName);
+  parent.prepend(link);
+  parent.removeAttribute('aria-current');
+  const separator = savedElement('span', 'breadcrumbs__separator', '—');
+  separator.setAttribute('aria-hidden', 'true');
+  current.before(parent, separator);
+  current.setAttribute('aria-current', 'page');
+  current.querySelector('.breadcrumbs__item-name').textContent = title;
+  current.querySelector('meta[itemprop="position"]').content = '3';
   const intro = document.createElement('p');
   const grid = document.createElement('div');
   grid.className = 'proto-product-grid';

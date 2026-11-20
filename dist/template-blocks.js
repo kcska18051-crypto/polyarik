@@ -58,7 +58,10 @@
         continue;
       }
       if (detail && (!Number.isInteger(requested) || requested < 1 || requested > looks.length)) {
-        document.querySelector('#pagetitle').textContent = 'Образ не найден';
+        const title = 'Образ не найден';
+        document.querySelector('#pagetitle').textContent = title;
+        document.title = title + ' — Полярик';
+        setDetailBreadcrumbs(title, 'Образы', 'looks.html');
         const back = el('a', 'Все образы');
         back.href = 'looks.html';
         block.replaceWith(back);
@@ -91,12 +94,9 @@
         const title = lookTitles[index];
         document.querySelector('#pagetitle').textContent = title;
         document.title = title + ' — Полярик';
-        const crumbs = document.querySelector('#navigation .breadcrumbs');
         const back = el('a', 'Все образы', 'btn btn-transparent-border-color');
         back.href = 'looks.html';
-        const collection = el('a', 'Образы');
-        collection.href = back.href;
-        crumbs.replaceChildren(crumbs.querySelector('a'), ' — ', collection, ' — ', title);
+        setDetailBreadcrumbs(title, 'Образы', 'looks.html');
         const card = block.querySelector('[data-look-card]');
         const layout = el('div', undefined, 'look-detail');
         const picture = card.querySelector('.lookbook__picture');
@@ -128,6 +128,16 @@
 
     }
   }
+  function setDetailBreadcrumbs(title, parentName, parentUrl) {
+    const breadcrumbs = document.querySelector('#navigation .breadcrumbs');
+    const parent = el('a', parentName, 'breadcrumbs__link font_xs');
+    parent.href = parentUrl;
+    const current = breadcrumbs.querySelector('[aria-current="page"]');
+    const separator = el('span', ' — ');
+    separator.setAttribute('aria-hidden', 'true');
+    current.before(parent, separator);
+    current.textContent = title;
+  }
   function gallery(){
     const block = document.querySelector('[data-gallery-page] [data-template-gallery]');
     if (!block || !params.has('album')) return;
@@ -136,11 +146,7 @@
     const title = season ? season + ' — фотосессия' : 'Альбом не найден';
     document.querySelector('#pagetitle').textContent = title;
     document.title = title + ' — Полярик';
-    const breadcrumbs = document.querySelector('#navigation .breadcrumbs');
-    const home = breadcrumbs.querySelector('a');
-    const galleryLink = el('a', 'Галерея');
-    galleryLink.href = 'gallery.html';
-    breadcrumbs.replaceChildren(home, ' — ', galleryLink, ' — ', title);
+    setDetailBreadcrumbs(title, 'Галерея', 'gallery.html');
     const main = block.querySelector('.maxwidth-theme');
     main.replaceChildren();
     if (!season) {
@@ -154,7 +160,27 @@
     const back=el('a','Все альбомы','btn btn-default');back.href='gallery.html';main.append(back);
   }
   const campaign=params.get('campaign');
-  if(campaign&&location.pathname.endsWith('/offers.html')){const name=['Промокоды','Подарки и бонусы','Доставка в подарок'][Number(campaign)-1];const main=document.querySelector('main');main.replaceChildren(el('h2',name||'Акция не найдена'),el('p','Макет страницы акции. Условия, сроки и материалы будут опубликованы после согласования.'));const back=el('a','Все акции','btn btn-default');back.href='offers.html';main.append(back);}
+  if (campaign && location.pathname.endsWith('/offers.html')) {
+    const title = ['Промокоды', 'Подарки и бонусы', 'Доставка в подарок'][Number(campaign) - 1] || 'Акция не найдена';
+    document.querySelector('#pagetitle').textContent = title;
+    document.title = title + ' — Полярик';
+    const crumbs = document.querySelector('#navigation .breadcrumbs');
+    const current = crumbs.querySelector('.breadcrumbs__item:last-child');
+    const collection = el('a', undefined, 'breadcrumbs__link font_xs');
+    collection.href = 'offers.html';
+    collection.setAttribute('itemprop', 'item');
+    const parent = current.cloneNode(true);
+    collection.append(...parent.querySelector('span').childNodes);
+    parent.replaceChildren(collection);
+    current.before(parent, el('span', '—', 'breadcrumbs__separator'));
+    current.querySelector('.breadcrumbs__item-name').textContent = title;
+    current.querySelector('meta[itemprop="position"]').content = '3';
+    current.setAttribute('aria-current', 'page');
+    const main = document.querySelector('main');
+    const back = el('a', 'Все акции', 'btn btn-default');
+    back.href = 'offers.html';
+    main.replaceChildren(el('p', 'Макет страницы акции. Условия, сроки и материалы будут опубликованы после согласования.'), back);
+  }
   gallery();
   const needProducts=document.querySelector('[data-template-recommendations],[data-template-looks]');
   if(needProducts)fetch('products.json?v=67').then(r=>r.json()).then(products=>{recommendations(products);looks(products);}).catch(()=>{needProducts.replaceChildren(el('p','Не удалось загрузить товары. Обновите страницу.'));});
