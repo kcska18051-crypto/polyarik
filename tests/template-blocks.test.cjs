@@ -9,8 +9,9 @@ async function setup(file='index',query=''){
  w.eval(fs.readFileSync(root+'template-blocks.js','utf8'));await new Promise(resolve=>setImmediate(resolve));return w;
 }
 test('recommendations use actual catalog cards and reveal remaining recommendations once',async()=>{
- const w=await setup(),d=w.document,grid=d.querySelector('[data-template-recommendations]');assert.equal(grid.querySelectorAll('.catalog_item').length,8);assert.equal(grid.querySelectorAll('button.to-cart').length,8);
- d.querySelector('[data-recommendations-more]').click();assert.equal(grid.querySelectorAll('.catalog_item').length,12);assert.equal(d.querySelector('[data-recommendations-more]').hidden,true);assert.equal(grid.querySelector('.item-title a').getAttribute('href'),'product.html?sku=DEMO-A2');
+ const w=await setup(),d=w.document,grid=d.querySelector('[data-template-recommendations]');assert.equal(grid.querySelectorAll('.catalog_item').length,7);assert.equal(grid.querySelectorAll('button.to-cart').length,7);
+ assert.equal(d.querySelector('[data-recommendations-section]').hidden,true);
+ d.querySelector('[data-recommendations-more]').click();assert.equal(d.querySelector('[data-recommendations-section]').hidden,false);assert.equal(grid.querySelectorAll('.catalog_item').length,15);assert.equal(d.querySelector('[data-recommendations-more]').hidden,true);assert.equal(grid.querySelector('.item-title a').getAttribute('href'),'product.html?sku=DEMO-A2');
 });
 test('native look changes its title, three linked products and detail route together',async()=>{
  const w=await setup(),d=w.document,look=d.querySelector('[data-template-looks]');assert.equal(look.querySelectorAll('.lookbook__items .block-item').length,3);look.querySelector('[data-look-next]').click();assert.equal(look.querySelector('.lookbook__info-title a').textContent,'Образ №2');assert.ok(look.querySelector('.lookbook__items').textContent.includes('DEMO-A29'));for(const a of look.querySelectorAll('a[href*="looks.html?look="]'))assert.equal(new URL(a.href).searchParams.get('look'),'2');

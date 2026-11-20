@@ -71,7 +71,7 @@ const productDetail = document.querySelector('.product-container');
 let products = [];
 const catalogSection = params.get('section');
 const catalogQuery = params.get('q')?.trim() || '';
-fetch('products.json?v=5').then(response => response.json()).then(data => {
+fetch('products.json?v=67').then(response => response.json()).then(data => {
   products = data;
   renderCart();
   if (document.querySelector('[data-checkout-page]')) {

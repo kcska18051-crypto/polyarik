@@ -8,9 +8,22 @@
     const grid=document.querySelector('[data-template-recommendations]');if(!grid)return;
     const selected=products.map((product,index)=>({product,index})).filter(x=>x.product.promoOffers?.includes('recommendations')).slice(0,15);
     const sample=document.querySelector('#aspro-product-card').content.firstElementChild;
-    const more=document.querySelector('[data-recommendations-more]');let count=8;
-    const render=()=>{grid.replaceChildren(...selected.slice(0,count).map(x=>window.PolyarikCatalogUI.card(sample,x.product,x.index)));more.hidden=count>=selected.length;};
-    more.addEventListener('click',()=>{count=15;render();});render();
+    const more = document.querySelector('[data-recommendations-more]');
+    const sectionLink = document.querySelector('[data-recommendations-section]');
+    const initialCount = 7;
+    const appendCards = entries => grid.append(...entries.map(({product, index}) =>
+      window.PolyarikCatalogUI.card(sample, product, index)));
+    const showSectionLink = () => {
+      more.hidden = true;
+      sectionLink.hidden = false;
+    };
+    appendCards(selected.slice(0, initialCount));
+    if (selected.length <= initialCount) showSectionLink();
+    more.addEventListener('click', () => {
+      appendCards(selected.slice(initialCount));
+      showSectionLink();
+      grid.children[initialCount]?.querySelector('.item-title a')?.focus();
+    }, {once: true});
   }
   function looks(products){
     for(const block of all('[data-template-looks]')){
@@ -69,5 +82,5 @@
   if(campaign&&location.pathname.endsWith('/offers.html')){const name=['Промокоды','Подарки и бонусы','Доставка в подарок'][Number(campaign)-1];const main=document.querySelector('main');main.replaceChildren(el('h2',name||'Акция не найдена'),el('p','Макет страницы акции. Условия, сроки и материалы будут опубликованы после согласования.'));const back=el('a','Все акции','btn btn-default');back.href='offers.html';main.append(back);}
   gallery();
   const needProducts=document.querySelector('[data-template-recommendations],[data-template-looks]');
-  if(needProducts)fetch('products.json?v=5').then(r=>r.json()).then(products=>{recommendations(products);looks(products);}).catch(()=>{needProducts.replaceChildren(el('p','Не удалось загрузить товары. Обновите страницу.'));});
+  if(needProducts)fetch('products.json?v=67').then(r=>r.json()).then(products=>{recommendations(products);looks(products);}).catch(()=>{needProducts.replaceChildren(el('p','Не удалось загрузить товары. Обновите страницу.'));});
 })();
