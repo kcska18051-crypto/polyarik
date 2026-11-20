@@ -12,3 +12,16 @@ serviceDialog.addEventListener('close', () => {
   serviceForm.reset();
   serviceStatus.textContent = '';
 });
+
+const productionLinks = [...document.querySelectorAll('[data-production]')];
+const requestedProduction = new URLSearchParams(location.search).get('type');
+const activeProduction = productionLinks.find(link => link.dataset.production === requestedProduction) ?? productionLinks[0];
+
+for (const link of productionLinks) {
+  if (link === activeProduction) link.setAttribute('aria-current', 'page');
+  else link.removeAttribute('aria-current');
+}
+for (const panel of document.querySelectorAll('[data-production-panel]')) {
+  panel.hidden = panel.dataset.productionPanel !== activeProduction.dataset.production;
+}
+document.querySelector('#service-request-title').textContent = 'Заявка на ' + activeProduction.textContent.trim().toLowerCase();

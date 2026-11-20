@@ -246,7 +246,7 @@
 <link rel="stylesheet" href="info.css">
 <link rel="stylesheet" href="promotions.css?v=5">
 <link rel="stylesheet" href="service.css?v=2">
-<script defer="" src="service.js"></script>
+<script defer="" src="service.js?v=2"></script>
 <link rel="stylesheet" href="account.css?v=3">
 <script defer="" src="account.js?v=60"></script>
 </head>
@@ -732,8 +732,10 @@
 
 							<main class="wrapper_inner proto-info-layout proto-service-layout" aria-labelledby="pagetitle">
   <aside class="proto-service-sidebar">
-    <nav class="proto-info-nav" aria-label="Услуги">
-      <a href="services.html" aria-current="page">Контрактное производство</a>
+    <nav class="proto-info-nav" aria-label="Виды производства">
+      <a href="services.html" aria-current="page" data-production="contract">Контрактное производство</a>
+      <a href="services.html?type=individual" data-production="individual">Индивидуальное производство</a>
+      <a href="services.html?type=subcontract" data-production="subcontract">Субподрядное производство</a>
     </nav>
   </aside>
   <article class="detail services fixed_wrapper">
@@ -747,7 +749,8 @@
           <button type="button" class="btn btn-default" data-service-request="">Заказать услугу</button>
         </div>
       </section>
-      <div class="ordered-block detail_content_wrapper proto-info-copy">
+      <div class="ordered-block detail_content_wrapper proto-info-copy" data-production-panel="contract">
+        <h2>Контрактное производство</h2>
         <p class="proto-info-lead">Контрактное производство — выпуск детских головных уборов и аксессуаров под вашим брендом.</p>
         <p>За основу можно взять модель из каталога или прислать эскиз. В техническом задании фиксируем материалы, цвет, размерный ряд, маркировку и упаковку. Перед запуском партии согласовываем образец.</p>
         <h2>Какие изделия можно заказать</h2>
@@ -765,6 +768,14 @@
         </ol>
         <p><a href="catalog.html">Посмотреть модели в каталоге</a></p>
       </div>
+      <section class="ordered-block detail_content_wrapper proto-info-copy" data-production-panel="individual" hidden>
+        <h2>Индивидуальное производство</h2>
+        <p>Обсудите с менеджером разработку изделия по вашему эскизу или образцу. Для обсуждения подготовьте пожелания к модели, материалам и тиражу.</p>
+      </section>
+      <section class="ordered-block detail_content_wrapper proto-info-copy" data-production-panel="subcontract" hidden>
+        <h2>Субподрядное производство</h2>
+        <p>Обсудите с менеджером, какие производственные операции нужно выполнить. Укажите техническое задание, объём партии и желаемые сроки.</p>
+      </section>
     </div>
   </article>
   <dialog class="promo-dialog" id="service-request-dialog" aria-labelledby="service-request-title">
@@ -780,7 +791,7 @@
       <p class="muted font_xs" role="status"></p>
     </form>
   </dialog>
-<section class="meeting-section"><h2>Виды производства</h2><details class="meeting-production"><summary>Контрактное производство</summary><p>Обсудите состав заказа, техническое задание, объём и сроки с менеджером.</p><a href="contacts.html">Связаться с нами</a></details><details class="meeting-production"><summary>Индивидуальное производство</summary><p>Обсудите состав заказа, техническое задание, объём и сроки с менеджером.</p><a href="contacts.html">Связаться с нами</a></details><details class="meeting-production"><summary>Субподрядное производство</summary><p>Обсудите состав заказа, техническое задание, объём и сроки с менеджером.</p><a href="contacts.html">Связаться с нами</a></details></section></main> 							</div> 					<div id="mobilefilter-overlay"></div></div>
+</main> 							</div> 					<div id="mobilefilter-overlay"></div></div>
 		<footer id="footer"><span id="contacts"></span>
 				<!--'start_frame_cache_viewed-block'-->			<div class="viewed_product_block no_fill">
 			<div class="wrapper_inner">
