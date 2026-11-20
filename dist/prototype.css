@@ -1448,3 +1448,5 @@ body#main :is(.btn, button)::after {
 @media(min-width:992px){ #header .menu-row td.catalog > .wrap, #header .menu-row td.catalog > .wrap > a { width:100%!important; min-width:0!important; } #header .menu-row td.catalog { padding:0!important; } #header .menu-row td.catalog > .wrap > a { padding:18px 4px!important; font-size:11px; } }
 
 #header .proto-header-type-two .right-icons > .line-block { margin:0!important; }
+
+.meeting-mobile-nav .meeting-menu > div { position:static; box-shadow:none; min-width:0; margin-top:8px; }
