@@ -29,3 +29,18 @@ relatedLink.textContent = related.title;
 const relatedDate = document.querySelector('.side-news__item-date');
 relatedDate.dateTime = related.isoDate;
 relatedDate.textContent = related.date;
+
+if (isEvent) {
+  const list = relatedLink.closest('.side-news__list');
+  const sample = relatedLink.closest('.side-news__item');
+  list.replaceChildren(...entries.filter(article => article !== entry).slice(0, 3).map(article => {
+    const row = sample.cloneNode(true);
+    const link = row.querySelector('.side-news__item-link');
+    link.href = 'event.html?item=' + encodeURIComponent(article.id);
+    link.textContent = article.title;
+    const time = row.querySelector('time');
+    time.dateTime = article.isoDate;
+    time.textContent = article.date;
+    return row;
+  }));
+}

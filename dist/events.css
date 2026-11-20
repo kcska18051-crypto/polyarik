@@ -26,3 +26,13 @@
   .events-rail .event-card { gap:14px; }
   .event-card-featured { min-height:240px; }
 }
+
+.event-detail { display:grid; grid-template-columns:minmax(0,1fr) minmax(230px,300px); gap:clamp(24px,4vw,56px); align-items:start; }
+.event-detail .detail { min-width:0; }
+.event-detail .detail-date { display:block; margin-bottom:16px; }
+.event-detail .detailimage { display:block; float:none; width:100%; max-width:none; max-height:460px; aspect-ratio:2/1; object-fit:cover; margin:0 0 24px; }
+.event-detail .news-detail-copy { max-width:74ch; font-size:16px; line-height:1.7; }
+.event-detail .side-news__title { font-size:20px; margin-top:0; }
+@media(max-width:767px) {
+  .event-detail { grid-template-columns:minmax(0,1fr); }
+}
