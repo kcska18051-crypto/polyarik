@@ -1606,7 +1606,12 @@ body#main :is(.btn, button)::after {
   #headerfixed { display: none !important; }
 }
 
-.proto-callback-dialog { width: min(580px, calc(100% - 24px)); }
+.proto-callback-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(580px, calc(100% - 24px));
+}
 .proto-callback-field input:focus-visible { outline: 2px solid #586a83; outline-offset: -2px; }
 .proto-callback-phone { display: flex; border: 1px solid #e5e5e5; border-radius: 3px; background: #f7f7f7; }
 .proto-callback-phone select { flex: 0 0 auto; padding: 0 8px; border: 0; background: transparent; }
