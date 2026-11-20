@@ -1436,16 +1436,16 @@ body#main :is(.btn, button)::after {
 
 @media(min-width:992px){
  #header .menu-row .table-menu > table, #header .menu-row .table-menu > table > tbody { display:block; width:100%; }
- #header .menu-row .table-menu > table > tbody > tr { display:grid; grid-template-columns:110px .6fr 1.45fr .9fr 1.2fr 1.05fr 1fr .8fr; align-items:center; }
- #header .menu-row .table-menu > table > tbody > tr > td { display:block; width:auto!important; min-width:0; padding:14px 5px; }
+ #header .menu-row .table-menu > table > tbody > tr { display:grid; grid-template-columns:repeat(8,max-content); align-items:stretch; }
+ #header .menu-row .table-menu > table > tbody > tr > td { display:block; width:auto!important; min-width:0; padding:14px clamp(8px, 1vw, 16px); align-content:center; }
  #header .menu-row .table-menu > table > tbody > tr > td.catalog > .wrap > a { padding-inline:8px; }
- #header .meeting-nav-item > a, #header .meeting-nav-item summary { white-space:normal; line-height:1.4; }
+ #header .meeting-nav-item > a, #header .meeting-nav-item summary { white-space:nowrap; line-height:1.4; font-size:13px; }
  #headerfixed .table-menu { overflow-x:auto; }
  #headerfixed .table-menu > table { min-width:780px; }
 }
-@media(min-width:992px) and (max-width:1199px){ #header .meeting-nav-item > a, #header .meeting-nav-item summary { font-size:10px; } }
+@media(min-width:992px) and (max-width:1199px){ #header .meeting-nav-item > a, #header .meeting-nav-item summary { font-size:12px; } }
 
-@media(min-width:992px){ #header .menu-row td.catalog > .wrap, #header .menu-row td.catalog > .wrap > a { width:100%!important; min-width:0!important; } #header .menu-row td.catalog { padding:0!important; } #header .menu-row td.catalog > .wrap > a { padding:18px 4px!important; font-size:11px; } }
+@media(min-width:992px){ #header .menu-row td.catalog > .wrap, #header .menu-row td.catalog > .wrap > a { width:100%!important; min-width:0!important; } #header .menu-row td.catalog { padding:0!important; } #header .menu-row td.catalog > .wrap > a { padding:18px clamp(18px, 2vw, 34px)!important; font-size:13px; white-space:nowrap; } }
 
 #header .proto-header-type-two .right-icons > .line-block { margin:0!important; }
 
