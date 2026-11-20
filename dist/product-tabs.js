@@ -31,19 +31,20 @@
     const status=element('p');status.dataset.reviewStatus='';status.setAttribute('role','status');
     function showForm(visible){form.hidden=!visible;open.setAttribute('aria-expanded',String(visible));if(visible)author.focus();else open.focus();}
     function render(){
-      empty.hidden=entries.length>0;list.replaceChildren();
-      for(const entry of entries){const card=element('article',undefined,'proto-review-card');card.append(element('strong',entry.author),element('p','Оценка: '+entry.rating+' из 5'),element('p',entry.review),element('small','Демонстрационный отзыв · '+(entry.date||'')));list.append(card);}
+      empty.hidden=entries.some(entry=>entry.approved===true);list.replaceChildren();
+      for(const entry of entries.filter(entry=>entry.approved===true)){const card=element('article',undefined,'proto-review-card');card.append(element('strong',entry.author),element('p','Оценка: '+entry.rating+' из 5'),element('p',entry.review),element('small','Отзыв · '+(entry.date||'')));list.append(card);}
     }
     open.addEventListener('click',()=>showForm(form.hidden));cancel.addEventListener('click',()=>{form.reset();showForm(false);});
     form.addEventListener('input',event=>event.target.setCustomValidity?.(''));
     form.addEventListener('submit',event=>{
       event.preventDefault();author.setCustomValidity(author.value.trim()?'':'Введите имя.');review.setCustomValidity(review.value.trim()?'':'Напишите отзыв.');
       if(!form.reportValidity() || !/^[1-5]$/.test(rating.value))return;
-      const next=[{author:author.value.trim(),rating:Number(rating.value),review:review.value.trim(),date:new Date().toLocaleDateString('ru-RU',{timeZone:'Europe/Moscow'})},...entries].slice(0,50);
+      const next=[{author:author.value.trim(),rating:Number(rating.value),review:review.value.trim(),approved:false,date:new Date().toLocaleDateString('ru-RU',{timeZone:'Europe/Moscow'})},...entries].slice(0,50);
       try {sessionStorage.setItem(key,JSON.stringify(next));} catch {status.textContent='Не удалось сохранить отзыв в браузере. Попробуйте ещё раз.';return;}
       entries=next;render();form.reset();showForm(false);status.textContent='Демо-отзыв сохранён в этой вкладке. Он не опубликован и не отправлен на сайт.';
     });
-    panel.replaceChildren(element('h2','Отзывы о товаре'),empty,open,form,list,status);render();
+    const moderation=element('a','Проверить модерацию (демонстрация)');moderation.href='moderation.html';
+    panel.replaceChildren(element('h2','Отзывы о товаре'),empty,open,form,list,status,moderation);render();
   }
   function mount(product) {
     const content=document.querySelector('.js-store-scroll > .tab-content');if(!content || content.dataset.productTabsReady)return;content.dataset.productTabsReady='true';

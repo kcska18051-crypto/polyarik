@@ -3,7 +3,7 @@ function app(){const a=setup('order');a.window.localStorage.setItem('polyarik-ca
 function change(a,input,value){input.value=value;input.dispatchEvent(new a.window.Event('change',{bubbles:true}));}
 test('carrier dropdown exposes the requested carriers and a conditional other field',()=>{
  const a=app();const f=a.document.querySelector('form[data-checkout-form]');assert.equal(f.elements.carrier.tagName,'SELECT');
- for(const name of ['СДЭК','ПЭК','Деловые линии','Ozon','Другая компания'])assert.ok([...f.elements.carrier.options].some(o=>o.textContent===name));
+ for(const name of ['СДЭК','ПЭК','Деловые линии','Ozon','Ваша транспортная компания'])assert.ok([...f.elements.carrier.options].some(o=>o.textContent===name));
  assert.equal(f.elements.carrierOther.disabled,true);change(a,f.elements.carrier,'other');assert.equal(f.elements.carrierOther.disabled,false);assert.equal(f.elements.carrierOther.required,true);
  change(a,f.elements.carrier,'ПЭК');assert.equal(f.elements.carrierOther.disabled,true);
 });
@@ -14,8 +14,8 @@ test('insurance requires an explicit yes or no, and alternate recipient fields a
 });
 test('confirmation preserves custom carrier, insurance and other recipient',()=>{
  const a=app();const f=a.document.querySelector('[data-checkout-form]');change(a,f.elements.carrier,'other');change(a,f.elements.recipientType,'other');
- for(const [key,value]of Object.entries({company:'ООО Тест',taxId:'1234567890',legalAddress:'Тестовый адрес',contact:'Заказчик',phone:'+79991234567',email:'test@example.test',city:'Москва',carrierOther:'Моя ТК',insurance:'yes',receiverFullName:'Иванов Иван Иванович',receiverPhone:'+79997654321'}))f.elements[key].value=value;
- f.elements.correctDetails.checked=true;f.dispatchEvent(new a.window.Event('submit',{bubbles:true,cancelable:true}));const order=JSON.parse(a.window.sessionStorage.getItem('polyarik-last-order'));assert.ok(order);assert.equal(order.customer.carrierName,'Моя ТК');assert.equal(order.customer.insurance,'yes');assert.equal(order.customer.recipientName,'Иванов Иван Иванович');assert.equal(order.customer.recipientPhone,'+79997654321');
+ for(const [key,value]of Object.entries({company:'ООО Тест',taxId:'1234567890',legalAddress:'Тестовый адрес',contact:'Заказчик',phone:'+79991234567',email:'test@example.test',city:'Москва',carrierOther:'Моя ТК',insurance:'yes',tariff:'Экспресс по согласованию',receiverFullName:'Иванов Иван Иванович',receiverPhone:'+79997654321'}))f.elements[key].value=value;
+ f.elements.correctDetails.checked=true;f.dispatchEvent(new a.window.Event('submit',{bubbles:true,cancelable:true}));const order=JSON.parse(a.window.sessionStorage.getItem('polyarik-last-order'));assert.ok(order);assert.equal(order.customer.carrierName,'Моя ТК');assert.equal(order.customer.insurance,'yes');assert.equal(order.customer.tariff,'Экспресс по согласованию');assert.equal(order.customer.recipientName,'Иванов Иван Иванович');assert.equal(order.customer.recipientPhone,'+79997654321');
  assert.match(a.document.querySelector('.proto-checkout-receipt').textContent,/СтраховкаНужна/);
 });
 test('header reports minimum and current payable cart value, including empty basket',()=>{
@@ -24,8 +24,12 @@ test('header reports minimum and current payable cart value, including empty bas
  a.window.localStorage.setItem('polyarik-cart','{}');vm.runInContext('renderCart()',a.context);assert.match(summary.textContent,/0 ₽/);
 });
 
-test('Ozon shows a manager tariff note without an invented tariff selector',()=>{
- const a=app();const f=a.document.querySelector('[data-checkout-form]');const note=[...f.querySelectorAll('p')].find(p=>p.textContent.startsWith('Тариф Ozon'));assert.ok(note.hidden);
- change(a,f.elements.carrier,'Ozon');assert.equal(note.hidden,false);assert.equal(f.elements.carrierOther.disabled,true);
- change(a,f.elements.carrier,'ПЭК');assert.equal(note.hidden,true);
+test('optional free-text tariff is available for every carrier',()=>{
+ const a=app();const f=a.document.querySelector('[data-checkout-form]');assert.equal(f.elements.tariff.required,false);
+ for(const carrier of ['СДЭК','ПЭК','Деловые линии','Ozon','other']){change(a,f.elements.carrier,carrier);assert.equal(f.elements.tariff.disabled,false);assert.equal(f.elements.tariff.required,false);}
+});
+
+test('delivery preferences prefill checkout and draft takes priority',()=>{
+ const a=setup('order');a.window.localStorage.setItem('polyarik-cart',JSON.stringify({'DEMO-A1':10}));a.window.sessionStorage.setItem('polyarik-delivery-preferences',JSON.stringify({carrier:'ПЭК',tariff:'Желаемый тариф'}));vm.runInContext("openCheckout('Оформление заказа')",a.context);let f=a.document.querySelector('[data-checkout-form]');assert.equal(f.elements.carrier.value,'ПЭК');assert.equal(f.elements.tariff.value,'Желаемый тариф');
+ a.window.sessionStorage.setItem('polyarik-checkout-draft',JSON.stringify({carrier:'Ozon',tariff:'Из черновика'}));vm.runInContext("openCheckout('Оформление заказа')",a.context);f=a.document.querySelector('[data-checkout-form]');assert.equal(f.elements.carrier.value,'Ozon');assert.equal(f.elements.tariff.value,'Из черновика');
 });

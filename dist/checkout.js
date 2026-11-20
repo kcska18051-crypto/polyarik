@@ -31,7 +31,7 @@
     for (const [label, value] of [
       ['Компания', c.company], [c.country === 'BY' ? 'УНП' : 'ИНН', c.taxId], ['КПП', c.kpp],
       ['Юридический адрес', c.legalAddress], ['Контактное лицо', c.contact], ['Телефон', c.phone], ['Email', c.email],
-      ['Транспортная компания', c.carrierName || c.carrier], ['Город доставки', c.city], ['Адрес / терминал', c.deliveryAddress],
+      ['Транспортная компания', c.carrierName || c.carrier], ['Тариф', c.tariff], ['Город доставки', c.city], ['Адрес / терминал', c.deliveryAddress],
       ['Страховка', c.insurance === 'yes' ? 'Нужна' : c.insurance === 'no' ? 'Не нужна' : ''],
       ['Получатель', c.recipientName || c.contact], ['Телефон получателя', c.recipientPhone || c.phone], ['Комментарий', c.comment]
     ]) {
@@ -61,7 +61,7 @@
     if (!snapshot) return;
     const box = content(dialog);
     const form = element('form', undefined, 'proto-checkout-form'); form.dataset.checkoutForm = ''; form.noValidate = true;
-    const draft = read(draftKey) || {};
+    const draft = {...(read('polyarik-delivery-preferences') || {}), ...(read(draftKey) || {})};
     const status = element('p', '', 'proto-checkout-status'); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
     const field = (group, name, label, {required = true, type = 'text', maxLength = 200, autocomplete = '', hint = '', options = [], defaultValue = ''} = {}) => {
       const wrap = element('div', undefined, 'proto-checkout-field');
@@ -102,11 +102,11 @@
     field(contact, 'phone', 'Телефон', {type:'tel', autocomplete:'tel', maxLength:40, hint:'С кодом страны, например +7 или +375.'});
     field(contact, 'email', 'Email', {type:'email', autocomplete:'email', maxLength:254});
     const shipping = group(page ? 'Способ доставки' : '3. Доставка транспортной компанией'); shipping.id = 'order-delivery';
-    const carrier = field(shipping, 'carrier', 'Транспортная компания', {type:'select',options:[['','Выберите транспортную компанию'],['СДЭК','СДЭК'],['ПЭК','ПЭК'],['Деловые линии','Деловые линии'],['Ozon','Ozon'],['other','Другая компания']],hint:'Стоимость и сроки доставки согласовываются индивидуально с менеджером.'});
-    const carrierOther = field(shipping,'carrierOther','Название транспортной компании',{maxLength:120});
+    const carrier = field(shipping, 'carrier', 'Транспортная компания', {type:'select',options:[['','Выберите транспортную компанию'],['СДЭК','СДЭК'],['ПЭК','ПЭК'],['Деловые линии','Деловые линии'],['Ozon','Ozon'],['other','Ваша транспортная компания']],hint:'Стоимость и сроки доставки согласовываются индивидуально с менеджером.'});
+    const carrierOther = field(shipping,'carrierOther','Ваша транспортная компания',{maxLength:120});
     if (draft.carrier && ![...carrier.options].some(option=>option.value===draft.carrier)) { carrier.value='other';carrierOther.value=String(draft.carrierName || draft.carrier); }
-    const ozonNote=element('p','Тариф Ozon уточняется менеджером после согласования условий доставки.','proto-order-section-note'); shipping.append(ozonNote);
-    function updateCarrier() { ozonNote.hidden=carrier.value!=='Ozon'; const other=carrier.value==='other'; carrierOther.disabled=!other;carrierOther.required=other;carrierOther.closest('.proto-checkout-field').hidden=!other;carrierOther.setCustomValidity(''); }
+    field(shipping,'tariff','Тариф (необязательно)',{required:false,maxLength:120,hint:'Укажите желаемый тариф, если он известен. Стоимость и сроки согласуются с менеджером.'});
+    function updateCarrier() { const other=carrier.value==='other'; carrierOther.disabled=!other;carrierOther.required=other;carrierOther.closest('.proto-checkout-field').hidden=!other;carrierOther.setCustomValidity(''); }
     updateCarrier();carrier.addEventListener('change',updateCarrier);
     field(shipping, 'city', 'Город доставки', {maxLength:120, autocomplete:'address-level2'});
     field(shipping, 'deliveryAddress', 'Адрес или терминал ТК', {required:false, maxLength:500});

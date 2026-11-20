@@ -33,6 +33,6 @@ test('deep links and keyboard navigation select the correct tab',()=>{
 test('review form saves escaped demo text per SKU and does not claim publication',()=>{
  const w=setup();w.document.querySelector('[data-review-open]').click();const form=w.document.querySelector('[data-review-form]');assert.equal(form.hidden,false);
  form.elements.author.value='<img src=x onerror=alert(1)>';form.elements.rating.value='4';form.elements.review.value='Тестовый отзыв о товаре';form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
- const cards=w.document.querySelector('[data-review-list]');assert.equal(cards.querySelector('img'),null);assert.match(cards.textContent,/<img src=x/);assert.match(cards.textContent,/Тестовый отзыв/);assert.match(w.document.querySelector('[data-review-status]').textContent,/не опубликован/);
+ const cards=w.document.querySelector('[data-review-list]');assert.equal(cards.querySelector('img'),null);assert.equal(cards.textContent,'');assert.equal(JSON.parse(w.sessionStorage.getItem('polyarik-reviews-D-06-64'))[0].approved,false);assert.match(w.document.querySelector('[data-review-status]').textContent,/не опубликован/);
  assert.equal(JSON.parse(w.sessionStorage.getItem('polyarik-reviews-D-06-64')).length,1);assert.equal(w.sessionStorage.getItem('polyarik-reviews-D-06-63'),null);
 });

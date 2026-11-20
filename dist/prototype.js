@@ -14,7 +14,7 @@ const isCategoryPage = /\/category(?:\.html)?$/.test(location.pathname);
 const catalogRoot = document.querySelector('.proto-products-page .catalog_block.items');
 const needsCatalogTree = catalogRoot || isCategoryPage || document.querySelector('a[href^="category.html?section="]');
 const catalogTree = needsCatalogTree
-  ? fetch('catalog-tree.json').then(response => response.json())
+  ? fetch('catalog-tree.json?v=60').then(response => response.json())
   : Promise.resolve([]);
 
 function findCatalogSection(nodes, slug) {
@@ -38,7 +38,7 @@ function normalizeCatalogRoutes(tree) {
     const query = new URL(link.href).searchParams;
     const updated = updateRainMittensSection(query);
     const section = findCatalogSection(tree, query.get('section'));
-    if (updated || (section && usesProductListing(section))) link.href = 'products.html?' + query;
+    if (section) { query.set('title',section.name); link.href=sectionRoute(section,query); } else if(updated) link.href='products.html?'+query;
   }
   if (updateRainMittensSection(params)) history.replaceState(null, '', '?' + params + location.hash);
   if (!isCategoryPage) return;
@@ -235,7 +235,7 @@ function setPromoPrices(card, product) {
 const savedPage = document.querySelector('[data-saved-page]');
 const cartLinks = all('[data-cart-link]');
 const mobileRoutes = new Map([
-  ['Каталог', 'catalog.html'], ['Сравнение', 'compare.html'], ['Избранные', 'favorite.html'],
+  ['Каталог', 'catalog.html'], ['Избранные', 'favorite.html'],
   ['Корзина', 'cart.html'], ['Кабинет', 'account.html'],
 ]);
 const mobileLinks = new Map();
@@ -909,7 +909,7 @@ function renderOffer() {
   const intro = document.createElement('p');
   const grid = document.createElement('div');
   grid.className = 'proto-product-grid';
- const items = products.map((product,index) => ({product,index})).filter(({product,index}) => index < 4 && (!Number(offer) || product.price === Number(offer)));
+ const items = products.map((product,index) => ({product,index})).filter(({product,index}) => (Number(offer) ? product.price === Number(offer) : product.promoOffers?.includes(offer)));
   intro.textContent = items.length ? 'Демонстрационные товары из каталога прототипа.' : 'В этой подборке пока нет демонстрационных товаров.';
   if (items.length) grid.append(...items.map(({product,index}) => productCard(product)));
   container.className = 'proto-offer-results';
