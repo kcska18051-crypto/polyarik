@@ -5,25 +5,56 @@
   const read=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch{return null;}};
   const callbackTriggers = all('span.callback-block');
   if (callbackTriggers.length) {
-    const dialog = el('dialog');
+    const dialog = el('dialog', undefined, 'proto-callback-dialog');
     dialog.setAttribute('aria-labelledby', 'callback-heading');
-    dialog.style.cssText = 'width:min(420px,calc(100% - 32px));padding:24px;border:1px solid #ddd';
-    dialog.innerHTML = `<form>
-      <h2 id="callback-heading">Заказать звонок</h2>
-      <p><label for="callback-phone">Телефон *</label><input class="form-control" id="callback-phone" type="tel" autocomplete="tel" required></p>
-      <p role="status"></p>
-      <button class="btn btn-default" type="submit">Отправить</button>
-      <button class="btn btn-transparent-border-color" type="button" data-close-callback>Закрыть</button>
-    </form>`;
+    dialog.innerHTML = `<button class="proto-callback-close" type="button" data-close-callback aria-label="Закрыть">×</button>
+      <form>
+        <h2 id="callback-heading">Заказать звонок</h2>
+        <div class="proto-callback-field">
+          <label for="callback-name">Ваше имя <span aria-hidden="true">*</span></label>
+          <input class="form-control" id="callback-name" name="name" autocomplete="name" maxlength="120" required autofocus>
+        </div>
+        <div class="proto-callback-field">
+          <label for="callback-phone">Телефон <span aria-hidden="true">*</span></label>
+          <input class="form-control" id="callback-phone" name="phone" type="tel" autocomplete="tel" placeholder="+7 912 345-67-89" maxlength="32" required>
+        </div>
+        <label class="proto-callback-consent">
+          <input type="checkbox" name="consent" required>
+          <span>Я даю согласие на обработку моих персональных данных для обратного звонка. <span aria-hidden="true">*</span></span>
+        </label>
+        <div class="proto-callback-actions">
+          <button class="btn btn-default" type="submit">Отправить</button>
+          <span>* — обязательные поля</span>
+        </div>
+        <p role="status" class="proto-callback-status"></p>
+      </form>`;
     const form = dialog.querySelector('form');
+    const name = form.elements.namedItem('name');
+    const phone = form.elements.namedItem('phone');
+    const status = form.querySelector('[role="status"]');
+    function validate() {
+      name.setCustomValidity(name.value.trim() ? '' : 'Укажите ваше имя.');
+      const digits = phone.value.replace(/\D/g, '');
+      const validPhone = /^\+?[\d\s().-]+$/.test(phone.value.trim()) && digits.length >= 10 && digits.length <= 15;
+      phone.setCustomValidity(validPhone ? '' : 'Введите телефон с кодом региона или страны.');
+    }
+    form.addEventListener('input', () => {
+      validate();
+      status.textContent = '';
+    });
     form.addEventListener('submit', event => {
       event.preventDefault();
-      form.querySelector('[role="status"]').textContent = 'В прототипе заявка не отправляется.';
+      validate();
+      if (!form.reportValidity()) return;
+      form.reset();
+      status.textContent = 'Форма заполнена корректно. Заявка не отправлена: это демонстрационный сайт.';
     });
     dialog.querySelector('[data-close-callback]').addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => {
       form.reset();
-      form.querySelector('[role="status"]').textContent = '';
+      name.setCustomValidity('');
+      phone.setCustomValidity('');
+      status.textContent = '';
     });
     document.body.append(dialog);
     for (const trigger of callbackTriggers) {

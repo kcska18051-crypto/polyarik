@@ -1544,3 +1544,55 @@ body#main :is(.btn, button)::after {
   #headerfixed .mega-menu:has(.meeting-menu[open]),
   #headerfixed .table-menu:has(.meeting-menu[open]) { overflow: visible; }
 }
+
+.proto-callback-dialog {
+  width: min(580px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: clamp(24px, 5vw, 52px);
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  overflow: auto;
+  color: #333;
+  background: #fff;
+}
+.proto-callback-dialog::backdrop { background: rgb(0 0 0 / 48%); }
+.proto-callback-dialog h2 { margin: 0 28px 28px 0; }
+.proto-callback-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #555;
+  font: 26px/1 sans-serif;
+}
+.proto-callback-field { margin-bottom: 20px; }
+.proto-callback-field label { display: block; margin-bottom: 6px; }
+.proto-callback-field input { width: 100%; min-height: 48px; font-size: 16px; }
+.proto-callback-field label span,
+.proto-callback-consent [aria-hidden] { color: #a52825; }
+.proto-callback-consent {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 0 0 24px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.proto-callback-consent input[type="checkbox"] {
+  appearance: auto;
+  display: inline-block;
+  position: static;
+  opacity: 1;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+}
+.proto-callback-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.proto-callback-actions .btn { margin: 0; }
+.proto-callback-status { margin: 16px 0 0; }
+.proto-callback-status:empty { margin: 0; }
